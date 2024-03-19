@@ -28,6 +28,17 @@ def openfilename() -> str:
         filetypes=filetypes)
 
     return filename
+
+# negative transformation
+def to_negative(image: list) -> list:
+    aux = []
+    for i in range(len(image)): # iterate over a the flattened array
+        pixel = []
+        for j in image[i]:
+            pixel.append(255 - j) # append the 'negative' pixel
+        aux.append(tuple(pixel)) # append to the aux array a tuple of the 'negated' colors
+    
+    return aux
         
 # action for button; gets image by filename and show
 def select_image():
@@ -37,7 +48,7 @@ def select_image():
     pixels = list(image.getdata()) # gets pixel data of the image
 
     image2 = Image.new(image.mode, image.size) # creates a new image
-    image2.putdata(pixels) # puts the data of image
+    image2.putdata(to_negative(pixels)) # puts the 'negated' data of image
 
     # shows image in the label
     tkimage1 = ImageTk.PhotoImage(image)
