@@ -3,69 +3,101 @@ from tkinter import ttk, filedialog as fd
 from tkinter.messagebox import showinfo
 from PIL import Image, ImageTk
 
-root = tk.Tk()
-root.title("Processamento de Imagem")
-frame = ttk.Frame(root, padding=10)
-frame.grid()
-img1_label = ttk.Label(frame, text="Imagem a ser selecionada") # label for selected image
-img1_label.grid(column=0, row=0, padx=20, pady=20)
-img2_label = ttk.Label(frame, text="Imagem transformada") # label for transformed image
-img2_label.grid(column=1, row=0, padx=20, pady=20)
+class MainApplication():
+    """Application to upload an image and make transformations"""
 
-# open dialog to select file
-def openfilename() -> str:
-    # allowed filetypes
-    filetypes = (
-        ('JPEG', '*.jpg *.jpeg'),
-        ('PNG', '*.png'),
-        ('TIFF', '*.tiff'),
-        ('All files', '*.*')
-    )
-    
-    filename = fd.askopenfilename(
-        title='Open a file',
-        initialdir='./',
-        filetypes=filetypes)
-
-    return filename
-
-# negative transformation
-def to_negative(image: list) -> list:
-    aux = []
-    for i in range(len(image)): # iterate over a the flattened array
-        pixel = []
-        for j in image[i]:
-            pixel.append(255 - j) # append the 'negative' pixel
-        aux.append(tuple(pixel)) # append to the aux array a tuple of the 'negated' colors
-    
-    return aux
+    def __init__(self):
+        self.root = tk.Tk()
+        self.frame = ttk.Frame(self.root, padding=10)
+        self.input_img_label = ttk.Label(self.frame, text="Imagem a ser selecionada") # label for selected image
+        self.input_img = None
+        self.output_img_label = ttk.Label(self.frame, text="Imagem transformada") # label for transformed image
+        self.output_img = None
+        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image)
+        self.negative_button = ttk.Button(self.frame, text="Negativo", command=self._to_negative)
+        self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset)
         
-# action for button; gets image by filename and show
-def select_image():
-    filename = openfilename()
+    def _config(self) -> None:
+        self.root.title("Processamento de Imagem")
+        self.frame.grid()
+        self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
+        self.output_img_label.grid(column=1, row=0, padx=20, pady=20)
+        self.open_button.grid(column=0, row=1, columnspan=2)
 
-    image = Image.open(filename) # open image with pillow    
-    pixels = list(image.getdata()) # gets pixel data of the image
+    def run(self) -> None:
+        self._config()
+        self.root.mainloop()
 
-    image2 = Image.new(image.mode, image.size) # creates a new image
-    image2.putdata(to_negative(pixels)) # puts the 'negated' data of image
+    def _select_image(self) -> None:
+        """Action of the open button"""
+        try:
+            filename = self._openfilename()
 
-    # shows image in the label
-    tkimage1 = ImageTk.PhotoImage(image)
-    img1_label.config(image=tkimage1)
-    img1_label.image = tkimage1
-    
-    # shows image2 in the label
-    tkimage2 = ImageTk.PhotoImage(image2)
-    img2_label.config(image=tkimage2)
-    img2_label.image = tkimage2
-    
+            self.open_button.config(text="Trocar Imagem")
 
-def main():
-    open_button = ttk.Button(frame, text="Abrir imagem", command=select_image)
-    open_button.grid(column=0, row=1, columnspan=2)
-    
-    root.mainloop()
+            self.input_img = Image.open(filename) # open image with pillow    
+            pixels = list(self.input_img.getdata()) # gets pixel data of the image
+
+            self.output_img = Image.new(self.input_img.mode, self.input_img.size) # creates a new image
+            self.output_img.putdata(pixels) # puts the 'negated' data of image
+
+            # shows image in the label
+            tkimage1 = ImageTk.PhotoImage(self.input_img)
+            self.input_img_label.config(image=tkimage1)
+            self.input_img_label.image = tkimage1
+            
+            # shows image2 in the label
+            tkimage2 = ImageTk.PhotoImage(self.output_img)
+            self.output_img_label.config(image=tkimage2)
+            self.output_img_label.image = tkimage2
+
+            self.negative_button.grid(column=0, row=2, columnspan=2)
+            self.reset_button.grid(column=0, row=3, columnspan=2)
+        except:
+            print("imagem não selecionada")
+
+    def _openfilename(self) -> str:
+        """Open dialog to select a file and returns the path"""
+        # allowed filetypes
+        filetypes = (
+            ('JPEG', '*.jpg *.jpeg'),
+            ('PNG', '*.png'),
+            ('TIFF', '*.tiff'),
+            ('All files', '*.*')
+        )
+        
+        filename = fd.askopenfilename(
+            title='Open a file',
+            initialdir='./',
+            filetypes=filetypes)
+
+        return filename
+
+    def _to_negative(self) -> None:
+        """Convert the base image pixels to negative"""
+
+        image = self.input_img.getdata()
+        negative_image = []
+        for i in range(len(image)): # iterate over a the flattened array
+            negative_pixel = []
+            for j in image[i]:
+                negative_pixel.append(255 - j) # append the 'negative' pixel
+            negative_image.append(tuple(negative_pixel)) # append to the aux array a tuple of the 'negated' colors
+        
+        self.output_img.putdata(negative_image)
+        
+        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        self.output_img_label.config(image=tkimage2)
+        self.output_img_label.image = tkimage2
+
+    def _reset(self) -> None:
+        """Reset the transformed image to base"""
+        self.output_img.putdata(self.input_img.getdata())
+        
+        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        self.output_img_label.config(image=tkimage2)
+        self.output_img_label.image = tkimage2
 
 if __name__ == "__main__":
-    main()
+    app = MainApplication()
+    app.run()
