@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog as fd
 from tkinter.messagebox import showinfo
+from tkinter.constants import *
 from PIL import Image, ImageTk
 
 class MainApplication():
@@ -16,7 +17,8 @@ class MainApplication():
         self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image)
         self.negative_button = ttk.Button(self.frame, text="Negativo", command=self._to_negative)
         self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset)
-        
+        self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image)
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -53,6 +55,8 @@ class MainApplication():
 
             self.negative_button.grid(column=0, row=2, columnspan=2)
             self.reset_button.grid(column=0, row=3, columnspan=2)
+            self.save_button.grid(column=0, row=4, columnspan=2)
+
         except:
             print("imagem não selecionada")
 
@@ -97,6 +101,31 @@ class MainApplication():
         tkimage2 = ImageTk.PhotoImage(self.output_img)
         self.output_img_label.config(image=tkimage2)
         self.output_img_label.image = tkimage2
+
+    def _savefilename(self):
+        """Open dialog to select a filename and returns the path"""
+        filetypes = (
+            ('JPEG', '*.jpg *.jpeg'),
+            ('PNG', '*.png'),
+            ('TIFF', '*.tiff'),
+            ('All files', '*.*')
+        )
+
+        filename = fd.asksaveasfilename(
+            title='Open a file',
+            initialdir='./',
+            filetypes=filetypes
+        )
+
+        return filename
+
+    def _save_image(self):
+        """Action for the save button"""
+
+        filename = self._savefilename()
+
+        self.output_img.save(filename)
+
 
 if __name__ == "__main__":
     app = MainApplication()
