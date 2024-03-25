@@ -10,9 +10,9 @@ class MainApplication():
     def __init__(self):
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
-        self.input_img_label = ttk.Label(self.frame, text="Imagem a ser selecionada") # label for selected image
+        self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada") # label for selected image
         self.input_img = None
-        self.output_img_label = ttk.Label(self.frame, text="Imagem transformada") # label for transformed image
+        self.output_img_label = ttk.Label(self.frame, text="Imagem de saída") # label for transformed image
         self.output_img = None
         self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image)
         self.negative_button = ttk.Button(self.frame, text="Negativo", command=self._to_negative)
