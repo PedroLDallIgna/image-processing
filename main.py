@@ -18,6 +18,7 @@ class MainApplication():
         self.negative_button = ttk.Button(self.frame, text="Negativo", command=self._to_negative)
         self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset)
         self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image)
+        self.flip_vertically_button = ttk.Button(self.frame, text="Inverter verticalmente", command=self._flip_vertically)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -56,6 +57,7 @@ class MainApplication():
             self.negative_button.grid(column=0, row=2, columnspan=2)
             self.reset_button.grid(column=0, row=3, columnspan=2)
             self.save_button.grid(column=0, row=4, columnspan=2)
+            self.flip_vertically_button.grid(column=0, row=5, columnspan=2)
 
         except:
             print("imagem não selecionada")
@@ -126,6 +128,47 @@ class MainApplication():
 
         self.output_img.save(filename)
 
+    def _unflat_data(self, flattened_data, height, width):
+        unflattened_data = []
+        for row in range(height):
+            unflattened_data.append(flattened_data[row*width:(row+1)*width])
+
+        return unflattened_data
+
+    def _flat_data(self, unflattened_data):
+        flattened_data = []
+        for row in unflattened_data:
+            flattened_data += row
+
+        return flattened_data
+
+    def _flip_vertically(self):
+        image = self.input_img
+        img_data = self._unflat_data(list(image.getdata()), image.height, image.width)
+        flipped_img = Image.new(image.mode, image.size)
+        flipped_img_data = []
+        for row in range(len(img_data) - 1, -1, -1):
+            flipped_img_data.append(img_data[row])
+            # for col in range(image.width):
+            #     flipped_img_data.append(self.get_pixel(image, row, col))
+
+        flipped_img.putdata(self._flat_data(flipped_img_data))
+        self.output_img = flipped_img
+        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        self.output_img_label.config(image=tkimage2)
+        self.output_img_label.image = tkimage2
+
+
+    def get_pixel(self, image, row, col, depth=None):
+        img_data = list(image.getdata())
+        rows = image.height
+        cols = image.width
+
+        index = row * cols + col
+
+        if (depth != None):
+            return img_data[index][depth]
+        return img_data[index]
 
 if __name__ == "__main__":
     app = MainApplication()
