@@ -26,6 +26,7 @@ class MainApplication():
         self.flip_vertically_button = ttk.Button(self.frame, text="Inverter verticalmente", command=self._flip_vertically)
         self.flip_horizontally_button = ttk.Button(self.frame, text="Inverter horizontalmente", command=self._flip_horizontally)
         self.sum_images_button = ttk.Button(self.frame, text="Somar imagens", command=self._sum_images)
+        self.grayscale_button = ttk.Button(self.frame, text="Escala de cinza", command=self._to_grayscale)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -65,6 +66,7 @@ class MainApplication():
             self.save_button.grid(column=2, row=1)
             self.flip_vertically_button.grid(column=0, row=5, columnspan=2)
             self.flip_horizontally_button.grid(column=0, row=6, columnspan=2)
+            self.grayscale_button.grid(column=0, row=8, columnspan=2)
 
         except:
             print("imagem não selecionada")
@@ -117,8 +119,27 @@ class MainApplication():
 
         self._show_image(self.output_img, self.output_img_label)
 
+    def _to_grayscale(self):
+        """Convert the an image to grayscale"""
+        image = self.output_img
+        image_data = list(image.getdata())
+        grayscale_img_data = []
+
+        for pixel in image_data:
+            new_pixel = (pixel[0] + pixel[1] + pixel[2]) / 3
+            grayscale_img_data.append(new_pixel)
+
+        grayscale_img = Image.new('L', image.size)
+        grayscale_img.putdata(grayscale_img_data)
+
+        self.output_img = grayscale_img
+        self._show_image(self.output_img, self.output_img_label)
+
     def _reset(self) -> None:
         """Reset the transformed image to base"""
+        if (self.output_img.mode != self.input_img.mode):
+            self.output_img = self.output_img.convert(self.input_img.mode)
+
         self.output_img.putdata(self.input_img.getdata())
         
         self._show_image(self.output_img, self.output_img_label)
