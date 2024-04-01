@@ -4,12 +4,14 @@ from tkinter.messagebox import showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
 
+
+
 class MainApplication():
     """Application to upload an image and make transformations"""
 
     def __init__(self):
         self.root = tk.Tk()
-        self.frame = ttk.Frame(self.root, padding=10)
+        self.frame = ttk.Frame(self.root, padding=10, )
         self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada") # label for selected image
         self.input_img = None
         self.output_img_label = ttk.Label(self.frame, text="Imagem de saída") # label for transformed image
@@ -40,25 +42,18 @@ class MainApplication():
             self.open_button.config(text="Trocar Imagem")
 
             self.input_img = Image.open(filename) # open image with pillow    
-            input_img_data = list(self.input_img.getdata()) # gets pixel data of the image
+            input_img_data = list(self.input_img.getdata()) # gets pixel data of the input image
 
             self.output_img = Image.new(self.input_img.mode, self.input_img.size) # creates a new image
-            self.output_img.putdata(input_img_data) # puts the 'negated' data of image
-
-            base_width= 300
-            wpercent = (base_width / float(self.input_img.size[0]))
-            hsize = int((float(self.input_img.size[1]) * float(wpercent)))
+            self.output_img.putdata(input_img_data) # puts the input image data (copy)
         
-            # shows image in the label
-            tkimage1 = ImageTk.PhotoImage(self.input_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-            self.input_img_label.config(image=tkimage1)
-            self.input_img_label.image = tkimage1
+            # shows input image in the label
+            self._show_image(self.input_img, self.input_img_label)
             
-            # shows image2 in the label
-            tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-            self.output_img_label.config(image=tkimage2)
-            self.output_img_label.image = tkimage2
+            # shows output image in the label
+            self._show_image(self.output_img, self.output_img_label)
 
+            # show the action buttons
             self.negative_button.grid(column=0, row=2, columnspan=2)
             self.reset_button.grid(column=0, row=3, columnspan=2)
             self.save_button.grid(column=0, row=4, columnspan=2)
@@ -98,25 +93,13 @@ class MainApplication():
         
         self.output_img.putdata(negative_image)
 
-        base_width= 300
-        wpercent = (base_width / float(self.input_img.size[0]))
-        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
-        
-        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-        self.output_img_label.config(image=tkimage2)
-        self.output_img_label.image = tkimage2
+        self._show_image(self.output_img, self.output_img_label)
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""
         self.output_img.putdata(self.input_img.getdata())
         
-        base_width= 300
-        wpercent = (base_width / float(self.input_img.size[0]))
-        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
-        
-        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-        self.output_img_label.config(image=tkimage2)
-        self.output_img_label.image = tkimage2
+        self._show_image(self.output_img, self.output_img_label)
 
     def _savefilename(self):
         """Open dialog to select a filename and returns the path"""
@@ -170,13 +153,7 @@ class MainApplication():
         flipped_img.putdata(self._flat_data(flipped_img_data))
         self.output_img = flipped_img
 
-        base_width= 300
-        wpercent = (base_width / float(self.input_img.size[0]))
-        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
-        
-        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-        self.output_img_label.config(image=tkimage2)
-        self.output_img_label.image = tkimage2
+        self._show_image(self.output_img, self.output_img_label)
 
     def _flip_horizontally(self):
         """Horizontally flips the image"""
@@ -192,14 +169,23 @@ class MainApplication():
 
         flipped_img.putdata(self._flat_data(flipped_img_data))
         self.output_img = flipped_img
-        
-        base_width= 300
-        wpercent = (base_width / float(self.input_img.size[0]))
-        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
-        
-        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
-        self.output_img_label.config(image=tkimage2)
-        self.output_img_label.image = tkimage2
+
+        self._show_image(self.output_img, self.output_img_label)
+    
+
+    def _show_image(self, image, image_label):
+        """Shows the given image in the given label reescaling it"""
+        tkimage = ImageTk.PhotoImage(self._scale_image_label(image))
+        image_label.config(image=tkimage)
+        image_label.image = tkimage
+
+
+    def _scale_image(self, image, base_width=300):
+        """Reescales an image based on base_width"""
+        wpercent = (base_width / float(image.width))
+        hsize = int((float(image.height) * float(wpercent)))
+
+        return image.resize((base_width, hsize), Image.Resampling.LANCZOS)
 
 
     def get_pixel(self, image, row, col, depth=None):
