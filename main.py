@@ -14,34 +14,39 @@ class MainApplication():
         self.frame = ttk.Frame(self.root, padding=10, )
         self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada") # label for selected image
         self.input_img = None
+        self.input_img2_label = ttk.Label(self.frame, text="Imagem de entrada 2") # label for selected image
+        self.input_img2 = None
         self.output_img_label = ttk.Label(self.frame, text="Imagem de saída") # label for transformed image
         self.output_img = None
-        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image)
+        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1)
+        self.open_button2 = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_2)
         self.negative_button = ttk.Button(self.frame, text="Negativo", command=self._to_negative)
         self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset)
         self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image)
         self.flip_vertically_button = ttk.Button(self.frame, text="Inverter verticalmente", command=self._flip_vertically)
         self.flip_horizontally_button = ttk.Button(self.frame, text="Inverter horizontalmente", command=self._flip_horizontally)
+        self.sum_images_button = ttk.Button(self.frame, text="Somar imagens", command=self._sum_images)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
-        self.output_img_label.grid(column=1, row=0, padx=20, pady=20)
-        self.open_button.grid(column=0, row=1, columnspan=2)
+        self.input_img2_label.grid(column=1, row=0, padx=20, pady=20)
+        self.output_img_label.grid(column=2, row=0, padx=20, pady=20)
+        self.open_button.grid(column=0, row=1)
 
     def run(self) -> None:
         self._config()
         self.root.mainloop()
 
-    def _select_image(self) -> None:
+    def _select_image_1(self) -> None:
         """Action of the open button"""
         try:
             filename = self._openfilename()
-
+            
+            self.input_img = Image.open(filename) # open image with pillow    
             self.open_button.config(text="Trocar Imagem")
 
-            self.input_img = Image.open(filename) # open image with pillow    
             input_img_data = list(self.input_img.getdata()) # gets pixel data of the input image
 
             self.output_img = Image.new(self.input_img.mode, self.input_img.size) # creates a new image
@@ -54,11 +59,28 @@ class MainApplication():
             self._show_image(self.output_img, self.output_img_label)
 
             # show the action buttons
+            self.open_button2.grid(column=1, row=1)
             self.negative_button.grid(column=0, row=2, columnspan=2)
             self.reset_button.grid(column=0, row=3, columnspan=2)
-            self.save_button.grid(column=0, row=4, columnspan=2)
+            self.save_button.grid(column=2, row=1)
             self.flip_vertically_button.grid(column=0, row=5, columnspan=2)
             self.flip_horizontally_button.grid(column=0, row=6, columnspan=2)
+
+        except:
+            print("imagem não selecionada")
+
+    def _select_image_2(self) -> None:
+        """Action of the open button"""
+        try:
+            filename = self._openfilename()
+            
+            self.input_img2 = Image.open(filename) # open image with pillow    
+            self.open_button2.config(text="Trocar Imagem")
+        
+            # shows input image in the label
+            self._show_image(self.input_img2, self.input_img2_label)
+
+            self.sum_images_button.grid(column=0, row=7, columnspan=2)
 
         except:
             print("imagem não selecionada")
@@ -180,13 +202,39 @@ class MainApplication():
         image_label.image = tkimage
 
 
-    def _scale_image(self, image, base_width=300):
+    def _scale_image_label(self, image, base_width=300):
         """Reescales an image based on base_width"""
         wpercent = (base_width / float(image.width))
         hsize = int((float(image.height) * float(wpercent)))
 
         return image.resize((base_width, hsize), Image.Resampling.LANCZOS)
 
+
+    def _sum_images(self):
+        """Sum the two input images and shows as output image"""
+        img1 = self.input_img
+        img2 = self.input_img2
+
+        if (img1.width != img2.width or img1.height != img2.height):
+            img2 = img2.resize(img1.size, Image.Resampling.LANCZOS)
+
+        img1_data = list(img1.getdata())
+        img2_data = list(img2.getdata())
+
+        out_img = []
+        for pixel in range(len(img1_data)):
+            new_pixel = []
+            for color in range(len(img1_data[pixel])):
+                new_pixel_color = img1_data[pixel][color] + img2_data[pixel][color]
+                if new_pixel_color > 255:
+                    new_pixel.append(255)
+                else:
+                    new_pixel.append(new_pixel_color)
+            out_img.append(tuple(new_pixel))
+
+        self.output_img.putdata(out_img)
+
+        self._show_image(self.output_img, self.output_img_label)
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
