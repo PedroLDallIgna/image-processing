@@ -40,18 +40,22 @@ class MainApplication():
             self.open_button.config(text="Trocar Imagem")
 
             self.input_img = Image.open(filename) # open image with pillow    
-            pixels = list(self.input_img.getdata()) # gets pixel data of the image
+            input_img_data = list(self.input_img.getdata()) # gets pixel data of the image
 
             self.output_img = Image.new(self.input_img.mode, self.input_img.size) # creates a new image
-            self.output_img.putdata(pixels) # puts the 'negated' data of image
+            self.output_img.putdata(input_img_data) # puts the 'negated' data of image
 
+            base_width= 300
+            wpercent = (base_width / float(self.input_img.size[0]))
+            hsize = int((float(self.input_img.size[1]) * float(wpercent)))
+        
             # shows image in the label
-            tkimage1 = ImageTk.PhotoImage(self.input_img)
+            tkimage1 = ImageTk.PhotoImage(self.input_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
             self.input_img_label.config(image=tkimage1)
             self.input_img_label.image = tkimage1
             
             # shows image2 in the label
-            tkimage2 = ImageTk.PhotoImage(self.output_img)
+            tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
             self.output_img_label.config(image=tkimage2)
             self.output_img_label.image = tkimage2
 
@@ -86,15 +90,19 @@ class MainApplication():
         image = self.output_img
         image_data = list(image.getdata())
         negative_image = []
-        for i in range(len(image)): # iterate over a the flattened array
+        for i in range(len(image_data)): # iterate over a the flattened array
             negative_pixel = []
-            for j in image[i]:
+            for j in image_data[i]:
                 negative_pixel.append(255 - j) # append the 'negative' pixel
             negative_image.append(tuple(negative_pixel)) # append to the aux array a tuple of the 'negated' colors
         
         self.output_img.putdata(negative_image)
+
+        base_width= 300
+        wpercent = (base_width / float(self.input_img.size[0]))
+        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
         
-        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
         self.output_img_label.config(image=tkimage2)
         self.output_img_label.image = tkimage2
 
@@ -102,7 +110,11 @@ class MainApplication():
         """Reset the transformed image to base"""
         self.output_img.putdata(self.input_img.getdata())
         
-        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        base_width= 300
+        wpercent = (base_width / float(self.input_img.size[0]))
+        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
+        
+        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
         self.output_img_label.config(image=tkimage2)
         self.output_img_label.image = tkimage2
 
@@ -157,7 +169,12 @@ class MainApplication():
 
         flipped_img.putdata(self._flat_data(flipped_img_data))
         self.output_img = flipped_img
-        tkimage2 = ImageTk.PhotoImage(self.output_img)
+
+        base_width= 300
+        wpercent = (base_width / float(self.input_img.size[0]))
+        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
+        
+        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
         self.output_img_label.config(image=tkimage2)
         self.output_img_label.image = tkimage2
 
@@ -175,7 +192,12 @@ class MainApplication():
 
         flipped_img.putdata(self._flat_data(flipped_img_data))
         self.output_img = flipped_img
-        tkimage2 = ImageTk.PhotoImage(self.output_img)
+        
+        base_width= 300
+        wpercent = (base_width / float(self.input_img.size[0]))
+        hsize = int((float(self.input_img.size[1]) * float(wpercent)))
+        
+        tkimage2 = ImageTk.PhotoImage(self.output_img.resize((base_width, hsize), Image.Resampling.LANCZOS))
         self.output_img_label.config(image=tkimage2)
         self.output_img_label.image = tkimage2
 
