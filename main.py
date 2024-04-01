@@ -83,8 +83,8 @@ class MainApplication():
 
     def _to_negative(self) -> None:
         """Convert the base image pixels to negative"""
-
-        image = self.input_img.getdata()
+        image = self.output_img
+        image_data = list(image.getdata())
         negative_image = []
         for i in range(len(image)): # iterate over a the flattened array
             negative_pixel = []
@@ -131,6 +131,7 @@ class MainApplication():
         self.output_img.save(filename)
 
     def _unflat_data(self, flattened_data, height, width):
+        """Transforms the flat image data list (unidimensional) into an unflat (bidimensinal) image data list"""
         unflattened_data = []
         for row in range(height):
             unflattened_data.append(flattened_data[row*width:(row+1)*width])
@@ -138,6 +139,7 @@ class MainApplication():
         return unflattened_data
 
     def _flat_data(self, unflattened_data):
+        """Transforms the unflat image data list (bidimensional) into a flat (unidimensional) image data list"""
         flattened_data = []
         for row in unflattened_data:
             flattened_data += row
@@ -145,7 +147,8 @@ class MainApplication():
         return flattened_data
 
     def _flip_vertically(self):
-        image = self.input_img
+        """Vertically flips the image"""
+        image = self.output_img
         img_data = self._unflat_data(list(image.getdata()), image.height, image.width)
         flipped_img = Image.new(image.mode, image.size)
         flipped_img_data = []
@@ -159,7 +162,8 @@ class MainApplication():
         self.output_img_label.image = tkimage2
 
     def _flip_horizontally(self):
-        image = self.input_img
+        """Horizontally flips the image"""
+        image = self.output_img
         img_data = self._unflat_data(list(image.getdata()), image.height, image.width)
         flipped_img = Image.new(image.mode, image.size)
         flipped_img_data = []
