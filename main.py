@@ -30,6 +30,8 @@ class MainApplication():
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width="27")
         self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width="27")
         self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width="27")
+        self.limiar_value = tk.IntVar()
+        self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width="27")
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width="27")
 
     def _config(self) -> None:
@@ -142,7 +144,8 @@ class MainApplication():
         self.output_img = grayscale_img
         self._show_image(self.output_img, self.output_img_label)
 
-        self.limiarize_button.grid(column=0, row=7)
+        self.limiar_entry.grid(column=0, row=7)
+        self.limiarize_button.grid(column=0, row=8)
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""
@@ -297,9 +300,11 @@ class MainApplication():
         image = self.output_img
         img_data = list(image.getdata())
         binary_img_data = []
+        
+        limiar = self.limiar_value.get()
 
         for pixel in img_data:
-            new_pixel = 0 if pixel <= 128 else 255
+            new_pixel = 0 if pixel <= limiar else 255
             binary_img_data.append(new_pixel)
 
         binary_img = Image.new('1', image.size)
