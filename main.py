@@ -4,8 +4,6 @@ from tkinter.messagebox import showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
 
-
-
 class MainApplication():
     """Application to upload an image and make transformations"""
 
@@ -32,13 +30,13 @@ class MainApplication():
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width="27")
         self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width="27")
         self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width="27")
+        self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width="27")
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
         self.buttons_frame.grid(column=2, row=0)
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
-        # self.input_img2_label.grid(column=1, row=0, padx=20, pady=20)
         self.output_img_label.grid(column=3, row=0, padx=20, pady=20)
         self.open_button.grid(column=0, row=1)
 
@@ -143,6 +141,8 @@ class MainApplication():
 
         self.output_img = grayscale_img
         self._show_image(self.output_img, self.output_img_label)
+
+        self.limiarize_button.grid(column=0, row=7)
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""
@@ -290,6 +290,22 @@ class MainApplication():
 
         self.output_img.putdata(out_img)
 
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _limiarize(self):
+        """Limiarize an image"""
+        image = self.output_img
+        img_data = list(image.getdata())
+        binary_img_data = []
+
+        for pixel in img_data:
+            new_pixel = 0 if pixel <= 128 else 255
+            binary_img_data.append(new_pixel)
+
+        binary_img = Image.new('1', image.size)
+        binary_img.putdata(binary_img_data)
+
+        self.output_img = binary_img
         self._show_image(self.output_img, self.output_img_label)
 
 
