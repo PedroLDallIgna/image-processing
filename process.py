@@ -81,3 +81,35 @@ def equalize_histogram(im):
     # returns the flatted data
     return reflat_data(out_im_data)
 
+def unflat_data(flattened_data, height, width):
+    """Transforms the flat image data list (unidimensional) into an unflat (bidimensinal) image data list"""
+    return [flattened_data[row*width:(row+1)*width] for row in range(height)]
+
+def flat_data(unflattened_data):
+    """Transforms the unflat image data list (bidimensional) into a flat (unidimensional) image data list"""
+    flattened_data = []
+    for row in unflattened_data:
+        flattened_data += row
+
+    return flattened_data
+
+def concat_images(im1, im2):
+    """Concat both images (side by side) and return as flattened data"""
+    if (im1.mode != im2.mode):
+        raise Exception("The images modes are different")
+
+    # resize the second image case they don't have the same size
+    if (im1.height != im2.height):
+        im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
+
+    im1_data = unflat_data(list(im1.getdata()), im1.height, im1.width)
+    im2_data = unflat_data(list(im2.getdata()), im2.height, im2.width)
+
+    out_im_data = []
+    for row in range(len(im1_data)):
+        concatened_row = []
+        concatened_row += im1_data[row]
+        concatened_row += im2_data[row]
+        out_im_data.append(concatened_row)
+
+    return flat_data(out_im_data)

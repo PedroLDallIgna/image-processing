@@ -35,6 +35,7 @@ class MainApplication():
         self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width="27")
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width="27")
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width="27")
+        self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width="27")
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -95,6 +96,7 @@ class MainApplication():
 
             self.sum_images_button.grid(column=0)
             self.subt_images_button.grid(column=0)
+            self.concat_button.grid(column=0)
 
         except:
             print("imagem não selecionada")
@@ -310,6 +312,15 @@ class MainApplication():
         out_img_data = process.equalize_histogram(im)
         
         self.output_img.putdata(out_img_data)
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _concat_images(self):
+        out_img_data = process.concat_images(self.input_img, self.input_img2)
+        out_img = Image.new(self.input_img.mode, (self.input_img.width + self.input_img2.width, self.input_img.height))
+
+        out_img.putdata(out_img_data)
+        self.output_img = out_img
 
         self._show_image(self.output_img, self.output_img_label)
 
