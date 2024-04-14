@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog as fd
 from tkinter.messagebox import showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
+import process
 
 class MainApplication():
     """Application to upload an image and make transformations"""
@@ -33,6 +34,7 @@ class MainApplication():
         self.limiar_value = tk.IntVar()
         self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width="27")
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width="27")
+        self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width="27")
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -66,11 +68,12 @@ class MainApplication():
             self._show_image(self.output_img, self.output_img_label)
 
             # show the action buttons
-            self.open_button2.grid(column=0, row=0)
-            self.flip_vertically_button.grid(column=0, row=1)
-            self.flip_horizontally_button.grid(column=0, row=2)
-            self.grayscale_button.grid(column=0, row=3)
-            self.negative_button.grid(column=0, row=4)
+            self.open_button2.grid(column=0)
+            self.flip_vertically_button.grid(column=0)
+            self.flip_horizontally_button.grid(column=0)
+            self.grayscale_button.grid(column=0)
+            self.negative_button.grid(column=0)
+            self.histogram_button.grid(column=0)
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
 
@@ -90,8 +93,8 @@ class MainApplication():
             # shows input image in the label
             self._show_image(self.input_img2, self.input_img2_label)
 
-            self.sum_images_button.grid(column=0, row=5)
-            self.subt_images_button.grid(column=0, row=6)
+            self.sum_images_button.grid(column=0)
+            self.subt_images_button.grid(column=0)
 
         except:
             print("imagem não selecionada")
@@ -100,10 +103,10 @@ class MainApplication():
         """Open dialog to select a file and returns the path"""
         # allowed filetypes
         filetypes = (
+            ('All files', '*.*'),
             ('JPEG', '*.jpg *.jpeg'),
             ('PNG', '*.png'),
-            ('TIFF', '*.tiff'),
-            ('All files', '*.*')
+            ('TIFF', '*.tiff')
         )
         
         filename = fd.askopenfilename(
@@ -144,8 +147,8 @@ class MainApplication():
         self.output_img = grayscale_img
         self._show_image(self.output_img, self.output_img_label)
 
-        self.limiar_entry.grid(column=0, row=7)
-        self.limiarize_button.grid(column=0, row=8)
+        self.limiar_entry.grid(column=0)
+        self.limiarize_button.grid(column=0)
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""
@@ -242,32 +245,20 @@ class MainApplication():
 
         return image.resize((base_width, hsize), Image.Resampling.LANCZOS)
 
-
     def _sum_images(self):
         """Sum the two input images and shows as output image"""
         img1 = self.input_img
         img2 = self.input_img2
 
-        if (img1.width != img2.width or img1.height != img2.height):
-            img2 = img2.resize(img1.size, Image.Resampling.LANCZOS)
+        try:
+            out_img = process.sum_images(img1, img2)
 
-        img1_data = list(img1.getdata())
-        img2_data = list(img2.getdata())
+            self.output_img.putdata(out_img)
 
-        out_img = []
-        for pixel in range(len(img1_data)):
-            new_pixel = []
-            for color in range(len(img1_data[pixel])):
-                new_pixel_color = img1_data[pixel][color] + img2_data[pixel][color]
-                if new_pixel_color > 255:
-                    new_pixel.append(255)
-                else:
-                    new_pixel.append(new_pixel_color)
-            out_img.append(tuple(new_pixel))
-
-        self.output_img.putdata(out_img)
-
-        self._show_image(self.output_img, self.output_img_label)
+            self._show_image(self.output_img, self.output_img_label)
+        except:
+            showinfo("Modos de imagem diferentes", "Os modos das imagens são diferentes")
+        
 
     def _subt_images(self):
         """Subtract the two input images and shows as output image"""
@@ -311,6 +302,15 @@ class MainApplication():
         binary_img.putdata(binary_img_data)
 
         self.output_img = binary_img
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _equalize_histogram(self):
+        im = self.input_img
+
+        out_img_data = process.equalize_histogram(im)
+        
+        self.output_img.putdata(out_img_data)
+
         self._show_image(self.output_img, self.output_img_label)
 
 
