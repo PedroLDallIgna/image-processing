@@ -23,8 +23,10 @@ class MainApplication():
         self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image, width="27")
         self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1, width="27")
         self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset, width="27")
-        
         self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2, width="27")
+        self.change_img2_button = ttk.Button(self.frame, text="Trocar imagem", command=self._select_image_2, width="27")
+        self.remove_img2_button = ttk.Button(self.frame, text="Remover imagem", command=self._remove_image_2, width="27")
+        
         self.flip_vertically_button = ttk.Button(self.buttons_frame, text="Inverter verticalmente", command=self._flip_vertically, width="27")
         self.flip_horizontally_button = ttk.Button(self.buttons_frame, text="Inverter horizontalmente", command=self._flip_horizontally, width="27")
         self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width="27")
@@ -87,13 +89,15 @@ class MainApplication():
             filename = self._openfilename()
             
             self.input_img2 = Image.open(filename) # open image with pillow    
-            self.open_button2.config(text="Trocar Imagem")
+            self.open_button2.grid_remove()
 
             self.input_img2_label.grid(column=1, row=0, padx=20, pady=20)
         
             # shows input image in the label
             self._show_image(self.input_img2, self.input_img2_label)
 
+            self.change_img2_button.grid(column=1, row=1)
+            self.remove_img2_button.grid(column=1, row=2)
             self.sum_images_button.grid(column=0)
             self.subt_images_button.grid(column=0)
             self.concat_button.grid(column=0)
@@ -117,6 +121,13 @@ class MainApplication():
             filetypes=filetypes)
 
         return filename
+
+    def _remove_image_2(self):
+        self.input_img2 = None
+        self.input_img2_label.grid_remove()
+        self.change_img2_button.grid_remove()
+        self.remove_img2_button.grid_remove()
+        self.open_button2.grid(column=0, row=0)
 
     def _to_negative(self) -> None:
         """Convert the base image pixels to negative"""
@@ -157,7 +168,10 @@ class MainApplication():
         if (self.output_img.mode != self.input_img.mode):
             self.output_img = self.output_img.convert(self.input_img.mode)
 
-        self.output_img.putdata(self.input_img.getdata())
+        reseted_img = Image.new(self.input_img.mode, self.input_img.size)
+
+        reseted_img.putdata(self.input_img.getdata())
+        self.output_img = reseted_img
         
         self._show_image(self.output_img, self.output_img_label)
 
