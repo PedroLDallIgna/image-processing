@@ -39,6 +39,12 @@ class MainApplication():
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width="27")
         self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width="27")
 
+        self.slider_label = ttk.Label(self.buttons_frame, text='Brilho', width=27, anchor='w')
+        self.brightness_value = tk.DoubleVar()
+        self.brightness_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.brightness_value)
+        self.brightness_slider.bind("<ButtonRelease-1>", self._brightness)
+
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -77,6 +83,8 @@ class MainApplication():
             self.grayscale_button.grid(column=0)
             self.negative_button.grid(column=0)
             self.histogram_button.grid(column=0)
+            self.slider_label.grid(column=0)
+            self.brightness_slider.grid(column=0, sticky="we")
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
 
@@ -335,6 +343,16 @@ class MainApplication():
 
         out_img.putdata(out_img_data)
         self.output_img = out_img
+
+        self._show_image(self.output_img, self.output_img_label)
+
+
+    def _brightness(self, event):
+        brightness_update = (int(self.brightness_value.get()) * (256 / 100))
+
+        out_img_data = process.change_brightness(self.input_img, brightness_update)
+
+        self.output_img.putdata(out_img_data)
 
         self._show_image(self.output_img, self.output_img_label)
 

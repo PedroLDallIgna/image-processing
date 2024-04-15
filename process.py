@@ -113,3 +113,23 @@ def concat_images(im1, im2):
         out_im_data.append(concatened_row)
 
     return flat_data(out_im_data)
+
+def change_brightness(im, brightness_value):
+    img_data = list(im.getdata())
+
+    out_img_data = []
+
+    for pixel_i in range(len(img_data)):
+        new_pixel = []
+        for color_i in range(len(img_data[pixel_i])):
+            # new_color = round(img_data[pixel_i][color_i] * (1 + (int(self.brightness_value.get()) / 100)))
+            new_color = round(img_data[pixel_i][color_i] + brightness_value)
+            if (new_color > 255):
+                new_pixel.append(255)
+            elif (new_color < 0):
+                new_pixel.append(0)
+            else:
+                new_pixel.append(new_color)
+        out_img_data.append(tuple(new_pixel))
+
+    return out_img_data
