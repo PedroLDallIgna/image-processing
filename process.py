@@ -120,16 +120,23 @@ def change_brightness(im, brightness_value):
     out_img_data = []
 
     for pixel_i in range(len(img_data)):
-        new_pixel = []
-        for color_i in range(len(img_data[pixel_i])):
-            # new_color = round(img_data[pixel_i][color_i] * (1 + (int(self.brightness_value.get()) / 100)))
-            new_color = round(img_data[pixel_i][color_i] + brightness_value)
+        if (type(img_data[pixel_i]) == 'list'): 
+            new_pixel = []
+            for color_i in range(len(img_data[pixel_i])):
+                new_color = round(img_data[pixel_i][color_i] + brightness_value)
+                if (new_color > 255):
+                    new_pixel.append(255)
+                elif (new_color < 0):
+                    new_pixel.append(0)
+                else:
+                    new_pixel.append(new_color)
+            out_img_data.append(tuple(new_pixel))
+        else:
+            new_color = round(img_data[pixel_i] + brightness_value)
             if (new_color > 255):
-                new_pixel.append(255)
+                new_color = 255
             elif (new_color < 0):
-                new_pixel.append(0)
-            else:
-                new_pixel.append(new_color)
-        out_img_data.append(tuple(new_pixel))
+                new_color = 0
+            out_img_data.append(new_color)
 
     return out_img_data
