@@ -65,11 +65,8 @@ class MainApplication():
             self.input_img = Image.open(filename) # open image with pillow    
             self.open_button.config(text="Trocar Imagem")
 
-            input_img_data = list(self.input_img.getdata()) # gets pixel data of the input image
+            self.output_img = self.input_img.copy()
 
-            self.output_img = Image.new(self.input_img.mode, self.input_img.size) # creates a new image
-            self.output_img.putdata(input_img_data) # puts the input image data (copy)
-        
             # shows input image in the label
             self._show_image(self.input_img, self.input_img_label)
             
