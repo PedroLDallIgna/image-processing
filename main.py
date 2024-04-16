@@ -39,11 +39,19 @@ class MainApplication():
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width="27")
         self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width="27")
 
-        self.slider_label = ttk.Label(self.buttons_frame, text='Brilho', width=27, anchor='w')
-        self.brightness_value = tk.DoubleVar()
+        self.brightness_value = tk.IntVar()
+        self.brightness_value.set(0)
+        self.brightness_label = ttk.Label(self.buttons_frame, text=f"Brilho: {int(self.brightness_value.get())}%", width=27, anchor='w')
         self.brightness_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.brightness_value)
         self.brightness_slider.bind("<ButtonRelease-1>", self._brightness)
+        self.brightness_slider.bind("<Button1-Motion>", lambda event: self.brightness_label.config(text=f"Brilho: {int(self.brightness_value.get())}%"))
 
+        self.blending_value = tk.IntVar()
+        self.blending_value.set(50)
+        self.blending_label = ttk.Label(self.buttons_frame, text=f"Blending: {int(self.blending_value.get())}%", width=27, anchor='w')
+        self.blending_slider = ttk.Scale(self.buttons_frame, from_=0, to=100, orient='horizontal', variable=self.blending_value)
+        self.blending_slider.bind("<ButtonRelease-1>", self._blending)
+        self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -80,7 +88,7 @@ class MainApplication():
             self.grayscale_button.grid(column=0)
             self.negative_button.grid(column=0)
             self.histogram_button.grid(column=0)
-            self.slider_label.grid(column=0)
+            self.brightness_label.grid(column=0)
             self.brightness_slider.grid(column=0, sticky="we")
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
@@ -106,6 +114,8 @@ class MainApplication():
             self.sum_images_button.grid(column=0)
             self.subt_images_button.grid(column=0)
             self.concat_button.grid(column=0)
+            self.blending_label.grid(column=0)
+            self.blending_slider.grid(column=0, sticky='we')
 
         except:
             print("imagem não selecionada")
@@ -348,6 +358,16 @@ class MainApplication():
         brightness_update = (int(self.brightness_value.get()) * (256 / 100))
 
         out_img_data = process.change_brightness(self.input_img, brightness_update)
+
+        self.output_img.putdata(out_img_data)
+
+        self._show_image(self.output_img, self.output_img_label)
+
+
+    def _blending(self, event):
+        blending_value = self.blending_value.get() / 100
+
+        out_img_data = process.blend(self.input_img, self.input_img2, blending_value)
 
         self.output_img.putdata(out_img_data)
 

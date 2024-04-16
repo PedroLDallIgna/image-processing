@@ -120,9 +120,10 @@ def change_brightness(im, brightness_value):
     out_img_data = []
 
     for pixel_i in range(len(img_data)):
-        if (type(img_data[pixel_i]) == 'list'): 
+        if (type(img_data[pixel_i]) == tuple): 
             new_pixel = []
             for color_i in range(len(img_data[pixel_i])):
+                # new_color = round(img_data[pixel_i][color_i] * (1 + (int(self.brightness_value.get()) / 100)))
                 new_color = round(img_data[pixel_i][color_i] + brightness_value)
                 if (new_color > 255):
                     new_pixel.append(255)
@@ -140,3 +141,24 @@ def change_brightness(im, brightness_value):
             out_img_data.append(new_color)
 
     return out_img_data
+
+def blend(im1, im2, blend_value):
+    # resize the second image case they don't have the same size
+    if (im1.height != im2.height):
+        im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
+
+    im1_data = get_image_data(im1)
+    im2_data = get_image_data(im2)
+    out_im_data = [] 
+
+    for band_i in range(len(im1_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im1_data[band_i])):
+            new_pixel = blend_value * im1_data[band_i][pixel_i] + (1 - blend_value) * im2_data[band_i][pixel_i]
+            if (new_pixel > 255):
+                new_pixel = 255
+            elif (new_pixel < 0):
+                new_pixel = 0
+            out_im_data[band_i].append(round(new_pixel))
+
+    return reflat_data(out_im_data)
