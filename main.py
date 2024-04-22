@@ -46,6 +46,13 @@ class MainApplication():
         self.brightness_slider.bind("<ButtonRelease-1>", self._brightness)
         self.brightness_slider.bind("<Button1-Motion>", lambda event: self.brightness_label.config(text=f"Brilho: {int(self.brightness_value.get())}%"))
 
+        self.contrast_value = tk.IntVar()
+        self.contrast_value.set(0)
+        self.contrast_label = ttk.Label(self.buttons_frame, text=f"Contraste: {int(self.contrast_value.get())}%", width=27, anchor='w')
+        self.contrast_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.contrast_value)
+        self.contrast_slider.bind("<ButtonRelease-1>", self._contrast)
+        self.contrast_slider.bind("<Button1-Motion>", lambda event: self.contrast_label.config(text=f"Contraste: {int(self.contrast_value.get())}%"))
+
         self.blending_value = tk.IntVar()
         self.blending_value.set(50)
         self.blending_label = ttk.Label(self.buttons_frame, text=f"Blending: {int(self.blending_value.get())}%", width=27, anchor='w')
@@ -90,6 +97,8 @@ class MainApplication():
             self.histogram_button.grid(column=0)
             self.brightness_label.grid(column=0)
             self.brightness_slider.grid(column=0, sticky="we")
+            self.contrast_label.grid(column=0)
+            self.contrast_slider.grid(column=0, sticky="we")
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
 
@@ -358,6 +367,15 @@ class MainApplication():
         brightness_update = (int(self.brightness_value.get()) * (256 / 100))
 
         out_img_data = process.change_brightness(self.input_img, brightness_update)
+
+        self.output_img.putdata(out_img_data)
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _contrast(self, event):
+        contrast_value = (1 + (self.contrast_value.get() / 100))
+
+        out_img_data = process.change_contrast(self.input_img, contrast_value)
 
         self.output_img.putdata(out_img_data)
 

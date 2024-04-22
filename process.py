@@ -123,7 +123,6 @@ def change_brightness(im, brightness_value):
         if (type(img_data[pixel_i]) == tuple): 
             new_pixel = []
             for color_i in range(len(img_data[pixel_i])):
-                # new_color = round(img_data[pixel_i][color_i] * (1 + (int(self.brightness_value.get()) / 100)))
                 new_color = round(img_data[pixel_i][color_i] + brightness_value)
                 if (new_color > 255):
                     new_pixel.append(255)
@@ -141,6 +140,24 @@ def change_brightness(im, brightness_value):
             out_img_data.append(new_color)
 
     return out_img_data
+
+def change_contrast(im, contrast_value):
+    img_data = get_image_data(im)
+
+    out_img_data = []
+
+    for band_i in range(len(img_data)):
+        out_img_data.append([])
+        new_pixel = []
+        for pixel_i in range(len(img_data[band_i])):
+            new_pixel = round(img_data[band_i][pixel_i] * contrast_value)
+            if (new_pixel > 255):
+                new_pixel = 255
+            elif (new_pixel < 0):
+                new_pixel = 0
+            out_img_data[band_i].append(new_pixel)
+
+    return reflat_data(out_img_data)
 
 def blend(im1, im2, blend_value):
     # resize the second image case they don't have the same size
