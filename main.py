@@ -12,6 +12,7 @@ class MainApplication():
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
         self.buttons_frame = ttk.Frame(self.frame, padding=5)
+        self.binary_btns_frame = ttk.Frame(self.buttons_frame)
 
         self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada", width="40", anchor=CENTER) # label for selected image
         self.input_img = None
@@ -23,7 +24,7 @@ class MainApplication():
         self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image, width="27")
         self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1, width="27")
         self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset, width="27")
-        self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2, width="27")
+        self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2)
         self.change_img2_button = ttk.Button(self.frame, text="Trocar imagem", command=self._select_image_2, width="27")
         self.remove_img2_button = ttk.Button(self.frame, text="Remover imagem", command=self._remove_image_2, width="27")
         
@@ -60,6 +61,10 @@ class MainApplication():
         self.blending_slider.bind("<ButtonRelease-1>", self._blending)
         self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
+        self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._negate)
+        self.and_button = ttk.Button(self.binary_btns_frame, text="AND")
+        self.or_button = ttk.Button(self.binary_btns_frame, text="OR")
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -89,7 +94,7 @@ class MainApplication():
             self._show_image(self.output_img, self.output_img_label)
 
             # show the action buttons
-            self.open_button2.grid(column=0)
+            self.open_button2.grid(column=0, sticky='we')
             self.flip_vertically_button.grid(column=0)
             self.flip_horizontally_button.grid(column=0)
             self.grayscale_button.grid(column=0)
@@ -101,6 +106,12 @@ class MainApplication():
             self.contrast_slider.grid(column=0, sticky="we")
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
+
+            self.binary_btns_frame.grid(column=0, row=20, sticky='we')
+            self.not_button.grid(column=0, row=0)
+            self.and_button.grid(column=1, row=0)
+            self.or_button.grid(column=2, row=0)
+
 
         except:
             print("imagem não selecionada")
@@ -391,6 +402,24 @@ class MainApplication():
         out_img_data = process.blend(self.input_img, self.input_img2, blending_value)
 
         self.output_img.putdata(out_img_data)
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _negate(self):
+        im = self.input_img
+        im_data = None
+
+        if (im.mode != 'L'):
+            im_data = process.to_grayscale(im)
+
+            im = Image.new('L', im.size)
+            im.putdata(im_data)
+
+        out_im = Image.new('1', im.size)
+        out_im_data = process.negate(im)
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
 
         self._show_image(self.output_img, self.output_img_label)
 

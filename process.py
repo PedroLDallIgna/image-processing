@@ -195,3 +195,20 @@ def to_grayscale(im):
         out_im_data[0].append(new_pixel)
 
     return reflat_data(out_im_data)
+
+def negate(im):
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = 0
+            if (im_data[band_i][pixel_i] > 127):
+                new_pixel = 255
+            else:
+                new_pixel = 0
+            out_im_data[band_i].append(new_pixel)
+
+    return reflat_data(out_im_data)
+
