@@ -169,23 +169,28 @@ class MainApplication():
         self._show_image(self.output_img, self.output_img_label)
 
     def _to_grayscale(self):
-        """Convert the an image to grayscale"""
-        image = self.output_img
-        image_data = list(image.getdata())
-        grayscale_img_data = []
+        """Convert the input image to grayscale"""
 
-        for pixel in image_data:
-            new_pixel = (pixel[0] + pixel[1] + pixel[2]) / 3
-            grayscale_img_data.append(new_pixel)
+        grayscale_img = None
 
-        grayscale_img = Image.new('L', image.size)
-        grayscale_img.putdata(grayscale_img_data)
+        if (self.input_img.mode != 'L'):
+            image = self.input_img
+            # image_data = list(image.getdata())
+            grayscale_img_data = process.to_grayscale(image)
+
+            grayscale_img = Image.new('L', image.size)
+            grayscale_img.putdata(grayscale_img_data)
+
+        else:
+            grayscale_img = self.input_img.copy()
 
         self.output_img = grayscale_img
+        
         self._show_image(self.output_img, self.output_img_label)
 
         self.limiar_entry.grid(column=0)
         self.limiarize_button.grid(column=0)
+
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""

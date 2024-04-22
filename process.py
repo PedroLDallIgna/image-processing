@@ -179,3 +179,19 @@ def blend(im1, im2, blend_value):
             out_im_data[band_i].append(round(new_pixel))
 
     return reflat_data(out_im_data)
+
+def to_grayscale(im):
+    im_data = get_image_data(im)
+
+    out_im_data = []
+    out_im_data.append([])
+
+    for pixel_i in range(len(im_data[0])):
+        pixel_sum = 0
+        for band_i in range(len(im_data)):
+            pixel_sum += im_data[band_i][pixel_i]
+
+        new_pixel = pixel_sum / len(im_data)
+        out_im_data[0].append(new_pixel)
+
+    return reflat_data(out_im_data)
