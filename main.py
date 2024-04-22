@@ -197,9 +197,7 @@ class MainApplication():
         if (self.output_img.mode != self.input_img.mode):
             self.output_img = self.output_img.convert(self.input_img.mode)
 
-        reseted_img = Image.new(self.input_img.mode, self.input_img.size)
-
-        reseted_img.putdata(self.input_img.getdata())
+        reseted_img = self.input_img.copy()
         self.output_img = reseted_img
         
         self._show_image(self.output_img, self.output_img_label)
