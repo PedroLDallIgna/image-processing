@@ -196,7 +196,7 @@ def to_grayscale(im):
 
     return reflat_data(out_im_data)
 
-def negate(im):
+def binarize(im):
     im_data = get_image_data(im)
     out_im_data = []
 
@@ -212,3 +212,58 @@ def negate(im):
 
     return reflat_data(out_im_data)
 
+def negate(im):
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = 0
+            if (im_data[band_i][pixel_i] > 127):
+                new_pixel = 255
+            else:
+                new_pixel = 0
+            out_im_data[band_i].append(0 if new_pixel == 255 else 255)
+
+    return reflat_data(out_im_data)
+
+def and_(im1, im2):
+    if (im1.height != im2.height):
+        im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
+
+    im1_data = get_image_data(im1)
+    im2_data = get_image_data(im2)
+    out_im_data = []
+
+    for band_i in range(len(im1_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im1_data[band_i])):
+            new_pixel = 0
+            if (im1_data[band_i][pixel_i] == 0 and im2_data[band_i][pixel_i] == 0  or im1_data[band_i][pixel_i] == 0 and im2_data[band_i][pixel_i] == 255 or im1_data[band_i][pixel_i] == 255 and im2_data[band_i][pixel_i] == 0):
+                new_pixel = 0
+            elif (im1_data[band_i][pixel_i] == 255 and im2_data[band_i][pixel_i] == 255):
+                new_pixel = 255
+            out_im_data[band_i].append(new_pixel)
+    
+    return reflat_data(out_im_data)
+
+def or_(im1, im2):
+    if (im1.height != im2.height):
+        im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
+
+    im1_data = get_image_data(im1)
+    im2_data = get_image_data(im2)
+    out_im_data = []
+
+    for band_i in range(len(im1_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im1_data[band_i])):
+            new_pixel = 0
+            if (im1_data[band_i][pixel_i] == 0 and im2_data[band_i][pixel_i] == 0):
+                new_pixel = 0
+            elif (im1_data[band_i][pixel_i] == 255 and im2_data[band_i][pixel_i] == 255 or im1_data[band_i][pixel_i] == 0 and im2_data[band_i][pixel_i] == 255 or im1_data[band_i][pixel_i] == 255 and im2_data[band_i][pixel_i] == 0):
+                new_pixel = 255
+            out_im_data[band_i].append(new_pixel)
+    
+    return reflat_data(out_im_data)
