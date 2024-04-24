@@ -65,6 +65,8 @@ class MainApplication():
         self.and_button = ttk.Button(self.binary_btns_frame, text="AND", command=self._and)
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
 
+        self.min_button = ttk.Button(self.buttons_frame, text="MIN", command=self._min)
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -111,6 +113,8 @@ class MainApplication():
             self.not_button.grid(column=0, row=0)
             self.and_button.grid(column=1, row=0)
             self.or_button.grid(column=2, row=0)
+
+            self.min_button.grid(column=0)
 
 
         except:
@@ -465,6 +469,18 @@ class MainApplication():
 
         out_im = Image.new('1', im1.size)
         out_im_data = process.or_(im1, im2)
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _min(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.min_filter(im)
+        
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
