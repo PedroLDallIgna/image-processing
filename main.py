@@ -66,6 +66,7 @@ class MainApplication():
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
 
         self.min_button = ttk.Button(self.buttons_frame, text="MIN", command=self._min)
+        self.max_button = ttk.Button(self.buttons_frame, text="MAX", command=self._max)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -115,7 +116,7 @@ class MainApplication():
             self.or_button.grid(column=2, row=0)
 
             self.min_button.grid(column=0)
-
+            self.max_button.grid(column=0)
 
         except:
             print("imagem não selecionada")
@@ -480,6 +481,18 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.min_filter(im)
+        
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _max(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.max_filter(im)
         
         out_im.putdata(out_im_data)
 

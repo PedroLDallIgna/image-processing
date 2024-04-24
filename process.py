@@ -303,3 +303,38 @@ def min_filter(im):
 
     # return a flat list (list with tuple of pixels)
     return reflat_data(out_im_data)
+
+def max_filter(im):
+    """Apply minimum filter in the given image and return its data"""
+
+    im_data = get_image_data(im) # input image data by band(color)
+    out_im_data = [] # output image data
+
+    for band in range(len(im_data)):
+        out_im_data.append([]) # appends an empty list for the band
+        for row in range(im.height):
+            # if first or last row, only appends the pixel value
+            if (row == 0 or row == im.height-1):
+                for col in range(im.width):
+                    out_im_data[band].append(im_data[band][row * im.width + col])
+            # if not, iterates over columns
+            else:
+                for col in range(im.width):
+                    # if first or last column, only appends the pixel value
+                    if (col == 0 or col == im.width - 1):
+                        out_im_data[band].append(im_data[band][row * im.width + col])
+                    
+                    # if not...
+                    else:
+                        # get the mask (3x3)
+                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
+                                                                for j in range(col-1, col+2)]
+
+                        # get the maximum value in the mask
+                        MAX = max(mask)
+
+                        # appends the maximum value
+                        out_im_data[band].append(MAX)
+
+    # return a flat list (list with tuple of pixels)
+    return reflat_data(out_im_data)
