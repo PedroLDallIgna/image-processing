@@ -305,7 +305,7 @@ def min_filter(im):
     return reflat_data(out_im_data)
 
 def max_filter(im):
-    """Apply minimum filter in the given image and return its data"""
+    """Apply max filter in the given image and return its data"""
 
     im_data = get_image_data(im) # input image data by band(color)
     out_im_data = [] # output image data
@@ -341,7 +341,7 @@ def max_filter(im):
 
 
 def mean_filter(im):
-    """Apply minimum filter in the given image and return its data"""
+    """Apply mean filter in the given image and return its data"""
 
     im_data = get_image_data(im) # input image data by band(color)
     out_im_data = [] # output image data
