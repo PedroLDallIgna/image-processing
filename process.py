@@ -58,19 +58,33 @@ def sum_images(im1, im2):
     # returns the flatted data
     return reflat_data(out_im_data)
 
-def equalize_histogram(im):
-    histogram_data = cfd = [0 for i in range(256)]
-    out_im_data = get_image_data(im)
+def get_histogram(im):
+    im_data = get_image_data(im)
 
-    # get histogram
-    for band in range(len(out_im_data)):
-        for pixel_i in out_im_data[band]:
-            histogram_data[pixel_i] += 1
+    histogram = [0 for i in range(256)]
 
+    for band in range(len(im_data)):
+        for pixel_i in im_data[band]:
+            histogram[pixel_i] += 1
+
+    return histogram
+
+def get_cfd(histogram_data):
     # get cumulative distribution frequency
+    cfd = [0 for i in range(256)]
+
     cfd[0] = histogram_data[0]
     for i in range(1, len(cfd)):
-        cfd[i] = histogram_data[i-1] + histogram_data[i]
+        cfd[i] = cfd[i-1] + histogram_data[i]
+
+    return cfd
+
+def equalize_histogram(im):
+    out_im_data = get_image_data(im)
+
+    histogram_data = get_histogram(im)
+
+    cfd = get_cfd(histogram_data)
 
     # transforms image pixels
     for band in range(len(out_im_data)):
