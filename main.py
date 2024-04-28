@@ -3,7 +3,13 @@ from tkinter import ttk, filedialog as fd
 from tkinter.messagebox import showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
+import matplotlib 
 import process
+
+matplotlib.use('TkAgg')
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class MainApplication():
     """Application to upload an image and make transformations"""
@@ -298,6 +304,10 @@ class MainApplication():
         image_label.config(image=tkimage)
         image_label.image = tkimage
 
+        img_col = image_label.grid_info()['column']
+
+        img_histogram_data = process.get_histogram(image)
+        self._plot_histogram(histogram_data=img_histogram_data, column=img_col, row=10)
 
     def _scale_image_label(self, image, base_width=300):
         """Reescales an image based on base_width"""
@@ -364,6 +374,21 @@ class MainApplication():
 
         self.output_img = binary_img
         self._show_image(self.output_img, self.output_img_label)
+
+    def _plot_histogram(self, histogram_data, column, row):
+        # create a figure
+        figure = Figure(figsize=(4, 2), dpi=100)
+
+        # create FigureCanvasTkAgg object
+        figure_canvas = FigureCanvasTkAgg(figure, self.frame)
+
+        # create axes
+        axes = figure.add_subplot()
+
+        # create the barchart
+        axes.bar([i for i in range(256)], histogram_data)
+
+        figure_canvas.get_tk_widget().grid(column=column, row=row, padx=5, pady=5)
 
     def _equalize_histogram(self):
         im = self.input_img
