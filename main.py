@@ -515,7 +515,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.min_filter(im)
+        out_im_data = process.filter(im, 'min')
         
         out_im.putdata(out_im_data)
 
@@ -527,7 +527,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.max_filter(im)
+        out_im_data = process.filter(im, 'max')
         
         out_im.putdata(out_im_data)
 
@@ -539,7 +539,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.mean_filter(im)
+        out_im_data = process.filter(im, 'mean')
         
         out_im.putdata(out_im_data)
 
@@ -551,7 +551,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.median_filter(im)
+        out_im_data = process.filter(im, 'median')
         
         out_im.putdata(out_im_data)
 
@@ -565,7 +565,7 @@ class MainApplication():
         out_im = Image.new(im.mode, im.size)
 
         try:
-            out_im_data = process.order_filter(im, self.order_value.get())
+            out_im_data = process.filter(im, 'order', index=self.order_value.get())
         
             out_im.putdata(out_im_data)
 

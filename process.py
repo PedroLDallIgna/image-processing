@@ -282,187 +282,47 @@ def or_(im1, im2):
     
     return reflat_data(out_im_data)
 
-def min_filter(im):
-    """Apply minimum filter in the given image and return its data"""
+def filter(im, type, index=None, size=3):
 
-    im_data = get_image_data(im) # input image data by band(color)
-    out_im_data = [] # output image data
+    types_map = {
+        'min': min,
+        'max': max,
+        'mean': lambda mask: int(sum(mask) / len(mask)),
+        'median': lambda mask: mask[int(len(mask) / 2) + 1],
+        'order': lambda mask, index: mask[index]
+    }
 
-
-    for band in range(len(im_data)):
-        out_im_data.append([]) # appends an empty list for the band
-        for row in range(im.height):
-            # if first or last row, only appends the pixel value
-            if (row == 0 or row == im.height-1):
-                for col in range(im.width):
-                    out_im_data[band].append(im_data[band][row * im.width + col])
-            # if not, iterates over columns
-            else:
-                for col in range(im.width):
-                    # if first or last column, only appends the pixel value
-                    if (col == 0 or col == im.width - 1):
-                        out_im_data[band].append(im_data[band][row * im.width + col])
-                    
-                    # if not...
-                    else:
-                        # get the mask (3x3)
-                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                                for j in range(col-1, col+2)]
-
-                        # get the mininum value in the mask
-                        MIN = min(mask)
-
-                        # appends the minimum value
-                        out_im_data[band].append(MIN)
-
-    # return a flat list (list with tuple of pixels)
-    return reflat_data(out_im_data)
-
-def max_filter(im):
-    """Apply max filter in the given image and return its data"""
-
-    im_data = get_image_data(im) # input image data by band(color)
-    out_im_data = [] # output image data
+    if (size % 2 == 0):
+        raise ValueError
+    center = int(size / 2)
+    im_data = get_image_data(im)
+    out_im_data = []
 
     for band in range(len(im_data)):
         out_im_data.append([]) # appends an empty list for the band
         for row in range(im.height):
-            # if first or last row, only appends the pixel value
-            if (row == 0 or row == im.height-1):
-                for col in range(im.width):
+            for col in range(im.width):
+                # if first row, last row, first column or last column, only appends the pixel value
+                if (row == 0 or row == im.height-1 or col == 0 or col == im.width - 1):
                     out_im_data[band].append(im_data[band][row * im.width + col])
-            # if not, iterates over columns
-            else:
-                for col in range(im.width):
-                    # if first or last column, only appends the pixel value
-                    if (col == 0 or col == im.width - 1):
-                        out_im_data[band].append(im_data[band][row * im.width + col])
-                    
-                    # if not...
+                
+                # if not...
+                else:
+                    # get the mask (3x3)
+                    mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
+                                                            for j in range(col-1, col+2)]
+
+                    # sort the mask
+                    mask.sort()
+
+                    # get the resulting value
+                    if (type == 'order'):
+                        result_value = types_map[type](mask, index)
                     else:
-                        # get the mask (3x3)
-                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                                for j in range(col-1, col+2)]
+                        result_value = types_map[type](mask)
 
-                        # get the maximum value in the mask
-                        MAX = max(mask)
-
-                        # appends the maximum value
-                        out_im_data[band].append(MAX)
-
-    # return a flat list (list with tuple of pixels)
-    return reflat_data(out_im_data)
-
-
-def mean_filter(im):
-    """Apply mean filter in the given image and return its data"""
-
-    im_data = get_image_data(im) # input image data by band(color)
-    out_im_data = [] # output image data
-
-    for band in range(len(im_data)):
-        out_im_data.append([]) # appends an empty list for the band
-        for row in range(im.height):
-            # if first or last row, only appends the pixel value
-            if (row == 0 or row == im.height-1):
-                for col in range(im.width):
-                    out_im_data[band].append(im_data[band][row * im.width + col])
-            # if not, iterates over columns
-            else:
-                for col in range(im.width):
-                    # if first or last column, only appends the pixel value
-                    if (col == 0 or col == im.width - 1):
-                        out_im_data[band].append(im_data[band][row * im.width + col])
-                    
-                    # if not...
-                    else:
-                        # get the mask (3x3)
-                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                                for j in range(col-1, col+2)]
-
-                        # get the mean value in the mask
-                        MEAN = int(sum(mask) / len(mask)) 
-
-                        # appends the mean value
-                        out_im_data[band].append(MEAN)
-
-    # return a flat list (list with tuple of pixels)
-    return reflat_data(out_im_data)
-
-
-def median_filter(im):
-    """Apply median filter in the given image and return its data"""
-
-    im_data = get_image_data(im) # input image data by band(color)
-    out_im_data = [] # output image data
-
-    for band in range(len(im_data)):
-        out_im_data.append([]) # appends an empty list for the band
-        for row in range(im.height):
-            # if first or last row, only appends the pixel value
-            if (row == 0 or row == im.height-1):
-                for col in range(im.width):
-                    out_im_data[band].append(im_data[band][row * im.width + col])
-            # if not, iterates over columns
-            else:
-                for col in range(im.width):
-                    # if first or last column, only appends the pixel value
-                    if (col == 0 or col == im.width - 1):
-                        out_im_data[band].append(im_data[band][row * im.width + col])
-                    
-                    # if not...
-                    else:
-                        # get the mask (3x3)
-                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                                for j in range(col-1, col+2)]
-
-                        # sort the mask
-                        mask.sort()
-
-                        # get the median value in the mask
-                        MEDIAN = mask[int(len(mask) / 2)  + 1] 
-
-                        # appends the median value
-                        out_im_data[band].append(MEDIAN)
-
-    # return a flat list (list with tuple of pixels)
-    return reflat_data(out_im_data)
-
-
-def order_filter(im, index):
-    """Apply order filter in the given image and return its data"""
-
-    im_data = get_image_data(im) # input image data by band(color)
-    out_im_data = [] # output image data
-
-    for band in range(len(im_data)):
-        out_im_data.append([]) # appends an empty list for the band
-        for row in range(im.height):
-            # if first or last row, only appends the pixel value
-            if (row == 0 or row == im.height-1):
-                for col in range(im.width):
-                    out_im_data[band].append(im_data[band][row * im.width + col])
-            # if not, iterates over columns
-            else:
-                for col in range(im.width):
-                    # if first or last column, only appends the pixel value
-                    if (col == 0 or col == im.width - 1):
-                        out_im_data[band].append(im_data[band][row * im.width + col])
-                    
-                    # if not...
-                    else:
-                        # get the mask (3x3)
-                        mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                                for j in range(col-1, col+2)]
-
-                        # sort the mask
-                        mask.sort()
-
-                        # get the value in the mask by an index
-                        ORDER = mask[index]
-
-                        # appends the value value
-                        out_im_data[band].append(ORDER)
+                    # appends the minimum value
+                    out_im_data[band].append(result_value)
 
     # return a flat list (list with tuple of pixels)
     return reflat_data(out_im_data)
