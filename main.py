@@ -74,11 +74,12 @@ class MainApplication():
         self.min_button = ttk.Button(self.buttons_frame, text="MIN", command=self._min)
         self.max_button = ttk.Button(self.buttons_frame, text="MAX", command=self._max)
         self.mean_button = ttk.Button(self.buttons_frame, text="MEAN", command=self._mean)
+        self.median_button = ttk.Button(self.buttons_frame, text="MEDIAN", command=self._median)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
-        self.buttons_frame.grid(column=2, row=0)
+        self.buttons_frame.grid(column=2, row=0, rowspan=10)
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
         self.output_img_label.grid(column=3, row=0, padx=20, pady=20)
         self.open_button.grid(column=0, row=1)
@@ -125,6 +126,7 @@ class MainApplication():
             self.min_button.grid(column=0)
             self.max_button.grid(column=0)
             self.mean_button.grid(column=0)
+            self.median_button.grid(column=0)
 
         except:
             print("imagem não selecionada")
@@ -539,6 +541,17 @@ class MainApplication():
 
         self._show_image(self.output_img, self.output_img_label)
 
+    def _median(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.median_filter(im)
+        
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
