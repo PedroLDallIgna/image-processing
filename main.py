@@ -75,6 +75,10 @@ class MainApplication():
         self.max_button = ttk.Button(self.buttons_frame, text="MAX", command=self._max)
         self.mean_button = ttk.Button(self.buttons_frame, text="MEAN", command=self._mean)
         self.median_button = ttk.Button(self.buttons_frame, text="MEDIAN", command=self._median)
+        self.order_value = tk.IntVar()
+        self.order_value.set(0)
+        self.order_entry = ttk.Entry(self.buttons_frame, textvariable=self.order_value)
+        self.order_button = ttk.Button(self.buttons_frame, text="ORDER", command=self._order)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -127,6 +131,8 @@ class MainApplication():
             self.max_button.grid(column=0)
             self.mean_button.grid(column=0)
             self.median_button.grid(column=0)
+            self.order_entry.grid(column=0)
+            self.order_button.grid(column=0)
 
         except:
             print("imagem não selecionada")
@@ -552,6 +558,24 @@ class MainApplication():
         self.output_img = out_im
 
         self._show_image(self.output_img, self.output_img_label)
+
+    def _order(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+
+        try:
+            out_im_data = process.order_filter(im, self.order_value.get())
+        
+            out_im.putdata(out_im_data)
+
+            self.output_img = out_im
+
+            self._show_image(self.output_img, self.output_img_label)
+        
+        except IndexError:
+            showinfo("IndexError", "Índice inexistente")
+
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
