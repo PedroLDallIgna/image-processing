@@ -1,3 +1,4 @@
+from math import floor
 from PIL import Image
 
 def get_max_and_min(data):
@@ -282,7 +283,7 @@ def or_(im1, im2):
     
     return reflat_data(out_im_data)
 
-def filter(im, type, index=None, size=3):
+def filter(im, type, index=None, mask_size=3):
 
     types_map = {
         'min': min,
@@ -292,25 +293,25 @@ def filter(im, type, index=None, size=3):
         'order': lambda mask, index: mask[index]
     }
 
-    if (size % 2 == 0):
+    if (mask_size % 2 == 0):
         raise ValueError
-    center = int(size / 2)
+    mask_space = floor(mask_size / 2)
     im_data = get_image_data(im)
     out_im_data = []
 
     for band in range(len(im_data)):
-        out_im_data.append([]) # appends an empty list for the band
+        out_im_data.append([]) # appends an empty list for the band(r,g or b)
         for row in range(im.height):
             for col in range(im.width):
-                # if first row, last row, first column or last column, only appends the pixel value
-                if (row == 0 or row == im.height-1 or col == 0 or col == im.width - 1):
+                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
+                if (row < mask_space or row > im.height-mask_space-1 or col < mask_space or col > im.width-mask_space-1):
                     out_im_data[band].append(im_data[band][row * im.width + col])
                 
                 # if not...
                 else:
-                    # get the mask (3x3)
-                    mask = [im_data[band][i * im.width + j] for i in range(row-1, row+2)
-                                                            for j in range(col-1, col+2)]
+                    # gets the mask of the given mask size
+                    mask = [im_data[band][i * im.width + j] for i in range(row-mask_space, row+mask_space+1)
+                                                            for j in range(col-mask_space, col+mask_space+1)]
 
                     # sort the mask
                     mask.sort()
