@@ -77,20 +77,23 @@ class MainApplication():
         self.mask_size_3x3 = ttk.Radiobutton(self.mask_size_frame, text="3x3", variable=self.mask_size_value, value=3)
         self.mask_size_5x5 = ttk.Radiobutton(self.mask_size_frame, text="5x5", variable=self.mask_size_value, value=5)
         self.mask_size_7x7 = ttk.Radiobutton(self.mask_size_frame, text="7x7", variable=self.mask_size_value, value=7)
+        self.mask_size_9x9 = ttk.Radiobutton(self.mask_size_frame, text="9x9", variable=self.mask_size_value, value=9)
         self.mask_size_11x11 = ttk.Radiobutton(self.mask_size_frame, text="11x11", variable=self.mask_size_value, value=11)
         self.min_button = ttk.Button(self.filters_frame, text="MIN", command=self._min)
         self.max_button = ttk.Button(self.filters_frame, text="MAX", command=self._max)
         self.mean_button = ttk.Button(self.filters_frame, text="MEAN", command=self._mean)
         self.median_button = ttk.Button(self.filters_frame, text="MEDIAN", command=self._median)
+        
+        self.order_filter_frame = ttk.Frame(self.filters_frame)
         self.order_value = tk.IntVar()
         self.order_value.set(0)
-        self.order_entry = ttk.Entry(self.filters_frame, textvariable=self.order_value)
-        self.order_button = ttk.Button(self.filters_frame, text="ORDER", command=self._order)
+        self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value)
+        self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
-        self.buttons_frame.grid(column=2, row=0, rowspan=3)
+        self.buttons_frame.grid(column=2, row=0, rowspan=10)
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
         self.output_img_label.grid(column=3, row=0, padx=20, pady=20)
         self.open_button.grid(column=0, row=1)
@@ -137,15 +140,19 @@ class MainApplication():
             self.filters_frame.grid(column=0, sticky='we')
             self.min_button.grid(column=0, row=0, sticky='we')
             self.mean_button.grid(column=0, row=1, sticky='we')
-            self.order_entry.grid(column=0, row=2, sticky='w')
             self.max_button.grid(column=1, row=0, sticky='we')
             self.median_button.grid(column=1, row=1, sticky='we')
-            self.order_button.grid(column=1, row=2, sticky='we')
+            
+            self.order_filter_frame.grid(column=0, row=2, columnspan=2, sticky='we')
+            self.order_entry.grid(column=0, row=0, sticky='we')
+            self.order_button.grid(column=1, row=0, sticky='we')
+
             self.mask_size_frame.grid(column=0, columnspan=2, sticky='we')
             self.mask_size_3x3.grid(column=0, row=0, padx=2)
             self.mask_size_5x5.grid(column=1, row=0, padx=2)
             self.mask_size_7x7.grid(column=2, row=0, padx=2)
-            self.mask_size_11x11.grid(column=3, row=0, padx=2)
+            self.mask_size_9x9.grid(column=3, row=0, padx=2)
+            self.mask_size_11x11.grid(column=4, row=0, padx=2)
 
         except:
             print("imagem não selecionada")
@@ -528,7 +535,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.filter(im, 'min')
+        out_im_data = process.filter(im, 'min', mask_size=self.mask_size_value.get())
         
         out_im.putdata(out_im_data)
 
@@ -540,7 +547,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.filter(im, 'max')
+        out_im_data = process.filter(im, 'max', mask_size=self.mask_size_value.get())
         
         out_im.putdata(out_im_data)
 
@@ -552,7 +559,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.filter(im, 'mean', mask_size=5)
+        out_im_data = process.filter(im, 'mean', mask_size=self.mask_size_value.get())
         
         out_im.putdata(out_im_data)
 
@@ -564,7 +571,7 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.filter(im, 'median')
+        out_im_data = process.filter(im, 'median', mask_size=self.mask_size_value.get())
         
         out_im.putdata(out_im_data)
 
@@ -578,7 +585,7 @@ class MainApplication():
         out_im = Image.new(im.mode, im.size)
 
         try:
-            out_im_data = process.filter(im, 'order', index=self.order_value.get())
+            out_im_data = process.filter(im, 'order', mask_size=self.mask_size_value.get(), index=self.order_value.get())
         
             out_im.putdata(out_im_data)
 
