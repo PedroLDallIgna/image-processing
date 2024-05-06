@@ -211,6 +211,18 @@ def to_grayscale(im):
 
     return reflat_data(out_im_data)
 
+def to_negative(im):
+    im_data = get_image_data(im)
+    out_im_data = []
+    
+    for band in range(len(im_data)):
+        out_im_data.append([])
+        for pixel in range(len(im_data[band])):
+            negative_pixel = 255 - im_data[band][pixel]
+            out_im_data[band].append(negative_pixel)
+            
+    return reflat_data(out_im_data)
+
 def binarize(im):
     im_data = get_image_data(im)
     out_im_data = []

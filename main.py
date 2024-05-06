@@ -131,6 +131,9 @@ class MainApplication():
             self.contrast_slider.grid(column=0, sticky="we")
             self.save_button.grid(column=3, row=1)
             self.reset_button.grid(column=3, row=2)
+            
+            self.limiar_entry.grid(column=0)
+            self.limiarize_button.grid(column=0)
 
             self.binary_btns_frame.grid(column=0, row=20, sticky='we')
             self.not_button.grid(column=0, row=0)
@@ -207,14 +210,7 @@ class MainApplication():
 
     def _to_negative(self) -> None:
         """Convert the base image pixels to negative"""
-        image = self.output_img
-        image_data = list(image.getdata())
-        negative_image = []
-        for i in range(len(image_data)): # iterate over a the flattened array
-            negative_pixel = []
-            for j in image_data[i]:
-                negative_pixel.append(255 - j) # append the 'negative' pixel
-            negative_image.append(tuple(negative_pixel)) # append to the aux array a tuple of the 'negated' colors
+        negative_image = process.to_negative(self.input_img)
         
         self.output_img.putdata(negative_image)
 
@@ -224,10 +220,9 @@ class MainApplication():
         """Convert the input image to grayscale"""
 
         grayscale_img = None
-
+        
         if (self.input_img.mode != 'L'):
             image = self.input_img
-            # image_data = list(image.getdata())
             grayscale_img_data = process.to_grayscale(image)
 
             grayscale_img = Image.new('L', image.size)
@@ -239,10 +234,6 @@ class MainApplication():
         self.output_img = grayscale_img
         
         self._show_image(self.output_img, self.output_img_label)
-
-        self.limiar_entry.grid(column=0)
-        self.limiarize_button.grid(column=0)
-
 
     def _reset(self) -> None:
         """Reset the transformed image to base"""
@@ -357,7 +348,6 @@ class MainApplication():
             self._show_image(self.output_img, self.output_img_label)
         except:
             showinfo("Modos de imagem diferentes", "Os modos das imagens são diferentes")
-        
 
     def _subt_images(self):
         """Subtract the two input images and shows as output image"""
