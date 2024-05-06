@@ -20,19 +20,24 @@ class MainApplication():
         self.buttons_frame = ttk.Frame(self.frame, padding=5)
         self.binary_btns_frame = ttk.Frame(self.buttons_frame)
 
-        self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
+        self.input_img_frame = ttk.Frame(self.frame)
+        self.input_img_label = ttk.Label(self.input_img_frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
         self.input_img = None
-        self.input_img2_label = ttk.Label(self.frame, text="Imagem de entrada 2", width=40, anchor=CENTER) # label for selected image
+        
+        self.input_img2_frame = ttk.Frame(self.frame)
+        self.input_img2_label = ttk.Label(self.input_img2_frame, text="Imagem de entrada 2", width=40, anchor=CENTER) # label for selected image
         self.input_img2 = None
-        self.output_img_label = ttk.Label(self.frame, text="Imagem de saída", width=40, anchor=CENTER) # label for transformed image
+        
+        self.output_img_frame = ttk.Frame(self.frame)
+        self.output_img_label = ttk.Label(self.output_img_frame, text="Imagem de saída", width=40, anchor=CENTER) # label for transformed image
         self.output_img = None
 
-        self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image, width=27)
-        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1, width=27)
-        self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset, width=27)
+        self.open_button = ttk.Button(self.input_img_frame, text="Abrir imagem", command=self._select_image_1, width=27)
+        self.save_button = ttk.Button(self.output_img_frame, text="Salvar imagem", command=self._save_image, width=27)
+        self.reset_button = ttk.Button(self.output_img_frame, text="Descartar tudo", command=self._reset, width=27)
         self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2)
-        self.change_img2_button = ttk.Button(self.frame, text="Trocar imagem", command=self._select_image_2, width=27)
-        self.remove_img2_button = ttk.Button(self.frame, text="Remover imagem", command=self._remove_image_2, width=27)
+        self.change_img2_button = ttk.Button(self.input_img2_frame, text="Trocar imagem", command=self._select_image_2, width=27)
+        self.remove_img2_button = ttk.Button(self.input_img2_frame, text="Remover imagem", command=self._remove_image_2, width=27)
         
         self.flip_vertically_button = ttk.Button(self.buttons_frame, text="Inverter verticalmente", command=self._flip_vertically, width=27)
         self.flip_horizontally_button = ttk.Button(self.buttons_frame, text="Inverter horizontalmente", command=self._flip_horizontally, width=27)
@@ -40,34 +45,31 @@ class MainApplication():
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
         self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width=27)
         self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width=27)
-        self.limiar_value = tk.IntVar()
+        self.limiar_value = tk.IntVar(value=127)
         self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width=27)
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width=27)
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width=27)
         self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width=27)
 
-        self.brightness_value = tk.IntVar()
-        self.brightness_value.set(0)
+        self.brightness_value = tk.IntVar(value=0)
         self.brightness_label = ttk.Label(self.buttons_frame, text=f"Brilho: {int(self.brightness_value.get())}%", width=27, anchor='w')
         self.brightness_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.brightness_value)
         self.brightness_slider.bind("<ButtonRelease-1>", self._brightness)
         self.brightness_slider.bind("<Button1-Motion>", lambda event: self.brightness_label.config(text=f"Brilho: {int(self.brightness_value.get())}%"))
 
-        self.contrast_value = tk.IntVar()
-        self.contrast_value.set(0)
+        self.contrast_value = tk.IntVar(value=0)
         self.contrast_label = ttk.Label(self.buttons_frame, text=f"Contraste: {int(self.contrast_value.get())}%", width=27, anchor='w')
         self.contrast_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.contrast_value)
         self.contrast_slider.bind("<ButtonRelease-1>", self._contrast)
         self.contrast_slider.bind("<Button1-Motion>", lambda event: self.contrast_label.config(text=f"Contraste: {int(self.contrast_value.get())}%"))
 
-        self.blending_value = tk.IntVar()
-        self.blending_value.set(50)
+        self.blending_value = tk.IntVar(value=50)
         self.blending_label = ttk.Label(self.buttons_frame, text=f"Blending: {int(self.blending_value.get())}%", width=27, anchor='w')
         self.blending_slider = ttk.Scale(self.buttons_frame, from_=0, to=100, orient='horizontal', variable=self.blending_value)
         self.blending_slider.bind("<ButtonRelease-1>", self._blending)
         self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
-        self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._negate)
+        self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._not)
         self.and_button = ttk.Button(self.binary_btns_frame, text="AND", command=self._and)
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
 
@@ -93,10 +95,12 @@ class MainApplication():
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
-        self.buttons_frame.grid(column=2, row=0, rowspan=10)
+        self.input_img_frame.grid(column=0, row=0, sticky='n')
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
-        self.output_img_label.grid(column=3, row=0, padx=20, pady=20)
-        self.open_button.grid(column=0, row=1)
+        self.buttons_frame.grid(column=2, row=0, rowspan=10)
+        self.output_img_frame.grid(column=3, row=0, sticky='n')
+        self.output_img_label.grid(column=0, row=0, padx=20, pady=20)
+        self.open_button.grid(column=0)
 
     def run(self) -> None:
         self._config()
@@ -129,8 +133,9 @@ class MainApplication():
             self.brightness_slider.grid(column=0, sticky="we")
             self.contrast_label.grid(column=0)
             self.contrast_slider.grid(column=0, sticky="we")
-            self.save_button.grid(column=3, row=1)
-            self.reset_button.grid(column=3, row=2)
+            
+            self.save_button.grid(column=0, row=1)
+            self.reset_button.grid(column=0, row=2)
             
             self.limiar_entry.grid(column=0)
             self.limiarize_button.grid(column=0)
@@ -168,13 +173,15 @@ class MainApplication():
             self.input_img2 = Image.open(filename) # open image with pillow    
             self.open_button2.grid_remove()
 
-            self.input_img2_label.grid(column=1, row=0, padx=20, pady=20)
+            self.input_img2_frame.grid(column=1, row=0, sticky='n')
+            self.input_img2_label.grid(column=0, row=0, padx=20, pady=20)
         
             # shows input image in the label
             self._show_image(self.input_img2, self.input_img2_label)
 
-            self.change_img2_button.grid(column=1, row=1)
-            self.remove_img2_button.grid(column=1, row=2)
+            self.change_img2_button.grid(column=0, row=1)
+            self.remove_img2_button.grid(column=0, row=2)
+            
             self.sum_images_button.grid(column=0)
             self.subt_images_button.grid(column=0)
             self.concat_button.grid(column=0)
@@ -207,6 +214,8 @@ class MainApplication():
         self.change_img2_button.grid_remove()
         self.remove_img2_button.grid_remove()
         self.open_button2.grid(column=0, row=0)
+        
+        self.input_img2_frame.grid_remove()
 
     def _to_negative(self) -> None:
         """Convert the base image pixels to negative"""
@@ -323,10 +332,11 @@ class MainApplication():
         image_label.config(image=tkimage)
         image_label.image = tkimage
 
+        img_parent = image_label.grid_info()['in']
         img_col = image_label.grid_info()['column']
 
         img_histogram_data = process.get_histogram(image)
-        self._plot_histogram(histogram_data=img_histogram_data, column=img_col, row=10)
+        self._plot_histogram(histogram_data=img_histogram_data, column=0, row=10, frame=img_parent)
 
     def _scale_image_label(self, image, base_width=300):
         """Reescales an image based on base_width"""
@@ -377,15 +387,15 @@ class MainApplication():
 
     def _limiarize(self):
         """Limiarize an image"""
-        image = self.output_img
-        img_data = list(image.getdata())
-        binary_img_data = []
+        image = self.input_img
         
-        limiar = self.limiar_value.get()
-
-        for pixel in img_data:
-            new_pixel = 0 if pixel <= limiar else 255
-            binary_img_data.append(new_pixel)
+        if (image.mode != 'L'):
+            grayscale_img = Image.new('L', image.size)
+            grayscale_img.putdata(process.to_grayscale(image))
+            
+            image = grayscale_img.copy()
+            
+        binary_img_data = process.binarize(image, self.limiar_value.get())
 
         binary_img = Image.new('1', image.size)
         binary_img.putdata(binary_img_data)
@@ -393,12 +403,12 @@ class MainApplication():
         self.output_img = binary_img
         self._show_image(self.output_img, self.output_img_label)
 
-    def _plot_histogram(self, histogram_data, column, row):
+    def _plot_histogram(self, histogram_data, column, row, frame):
         # create a figure
         figure = Figure(figsize=(4, 2), dpi=100)
 
         # create FigureCanvasTkAgg object
-        figure_canvas = FigureCanvasTkAgg(figure, self.frame)
+        figure_canvas = FigureCanvasTkAgg(figure, frame)
 
         # create axes
         axes = figure.add_subplot()
@@ -455,21 +465,28 @@ class MainApplication():
 
         self._show_image(self.output_img, self.output_img_label)
 
-    def _negate(self):
+    def _not(self):
         im = self.input_img
-        im_data = None
 
-        if (im.mode != 'L'):
-            im_data = process.to_grayscale(im)
+        if (im.mode != '1'):
+            out_im = im
+            
+            if (im.mode != 'L'):
+                grayscale_im_data = process.to_grayscale(im)
 
-            im = Image.new('L', im.size)
-            im.putdata(im_data)
+                out_im = Image.new('L', im.size)
+                out_im.putdata(grayscale_im_data)
 
-        out_im = Image.new('1', im.size)
-        out_im_data = process.negate(im)
-        out_im.putdata(out_im_data)
+            binary_im_data = process.binarize(out_im)
+            out_im = Image.new('1', out_im.size)
+            out_im.putdata(binary_im_data)
+            
+            out_im_data = process.not_(out_im)
+            out_im.putdata(out_im_data)
 
-        self.output_img = out_im
+            self.output_img = out_im
+        else:
+            self.output_img.putdata(process.not_(im))
 
         self._show_image(self.output_img, self.output_img_label)
 

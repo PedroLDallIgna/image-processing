@@ -212,6 +212,7 @@ def to_grayscale(im):
     return reflat_data(out_im_data)
 
 def to_negative(im):
+    """Receives an image and negate it"""
     im_data = get_image_data(im)
     out_im_data = []
     
@@ -223,7 +224,8 @@ def to_negative(im):
             
     return reflat_data(out_im_data)
 
-def binarize(im):
+def binarize(im, limiar_value=127):
+    """Receives a grayscale image and binarize it"""
     im_data = get_image_data(im)
     out_im_data = []
 
@@ -231,7 +233,7 @@ def binarize(im):
         out_im_data.append([])
         for pixel_i in range(len(im_data[band_i])):
             new_pixel = 0
-            if (im_data[band_i][pixel_i] > 127):
+            if (im_data[band_i][pixel_i] > limiar_value):
                 new_pixel = 255
             else:
                 new_pixel = 0
@@ -239,23 +241,20 @@ def binarize(im):
 
     return reflat_data(out_im_data)
 
-def negate(im):
+def not_(im):
+    """Receives a binary image and negate it"""
     im_data = get_image_data(im)
     out_im_data = []
 
     for band_i in range(len(im_data)):
         out_im_data.append([])
         for pixel_i in range(len(im_data[band_i])):
-            new_pixel = 0
-            if (im_data[band_i][pixel_i] > 127):
-                new_pixel = 255
-            else:
-                new_pixel = 0
-            out_im_data[band_i].append(0 if new_pixel == 255 else 255)
+            out_im_data[band_i].append(0 if im_data[band_i][pixel_i] == 255 else 255)
 
     return reflat_data(out_im_data)
 
 def and_(im1, im2):
+    """Receives two binary images and apply AND operation in its pixels"""
     if (im1.height != im2.height):
         im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
 
@@ -276,6 +275,7 @@ def and_(im1, im2):
     return reflat_data(out_im_data)
 
 def or_(im1, im2):
+    """Receives two binary images and apply OR operation in its pixels"""
     if (im1.height != im2.height):
         im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
 
