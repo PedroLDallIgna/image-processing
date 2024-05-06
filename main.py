@@ -20,31 +20,31 @@ class MainApplication():
         self.buttons_frame = ttk.Frame(self.frame, padding=5)
         self.binary_btns_frame = ttk.Frame(self.buttons_frame)
 
-        self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada", width="40", anchor=CENTER) # label for selected image
+        self.input_img_label = ttk.Label(self.frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
         self.input_img = None
-        self.input_img2_label = ttk.Label(self.frame, text="Imagem de entrada 2", width="40", anchor=CENTER) # label for selected image
+        self.input_img2_label = ttk.Label(self.frame, text="Imagem de entrada 2", width=40, anchor=CENTER) # label for selected image
         self.input_img2 = None
-        self.output_img_label = ttk.Label(self.frame, text="Imagem de saída", width="40", anchor=CENTER) # label for transformed image
+        self.output_img_label = ttk.Label(self.frame, text="Imagem de saída", width=40, anchor=CENTER) # label for transformed image
         self.output_img = None
 
-        self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image, width="27")
-        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1, width="27")
-        self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset, width="27")
+        self.save_button = ttk.Button(self.frame, text="Salvar imagem", command=self._save_image, width=27)
+        self.open_button = ttk.Button(self.frame, text="Abrir imagem", command=self._select_image_1, width=27)
+        self.reset_button = ttk.Button(self.frame, text="Descartar tudo", command=self._reset, width=27)
         self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2)
-        self.change_img2_button = ttk.Button(self.frame, text="Trocar imagem", command=self._select_image_2, width="27")
-        self.remove_img2_button = ttk.Button(self.frame, text="Remover imagem", command=self._remove_image_2, width="27")
+        self.change_img2_button = ttk.Button(self.frame, text="Trocar imagem", command=self._select_image_2, width=27)
+        self.remove_img2_button = ttk.Button(self.frame, text="Remover imagem", command=self._remove_image_2, width=27)
         
-        self.flip_vertically_button = ttk.Button(self.buttons_frame, text="Inverter verticalmente", command=self._flip_vertically, width="27")
-        self.flip_horizontally_button = ttk.Button(self.buttons_frame, text="Inverter horizontalmente", command=self._flip_horizontally, width="27")
-        self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width="27")
-        self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width="27")
-        self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width="27")
-        self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width="27")
+        self.flip_vertically_button = ttk.Button(self.buttons_frame, text="Inverter verticalmente", command=self._flip_vertically, width=27)
+        self.flip_horizontally_button = ttk.Button(self.buttons_frame, text="Inverter horizontalmente", command=self._flip_horizontally, width=27)
+        self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width=27)
+        self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
+        self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width=27)
+        self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width=27)
         self.limiar_value = tk.IntVar()
-        self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width="27")
-        self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width="27")
-        self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width="27")
-        self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width="27")
+        self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width=27)
+        self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width=27)
+        self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width=27)
+        self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width=27)
 
         self.brightness_value = tk.IntVar()
         self.brightness_value.set(0)
