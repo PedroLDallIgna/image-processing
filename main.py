@@ -18,7 +18,7 @@ class MainApplication():
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
         self.buttons_frame = ttk.Frame(self.frame, padding=5)
-        self.binary_btns_frame = ttk.Frame(self.buttons_frame)
+        self.binary_btns_frame = ttk.LabelFrame(self.buttons_frame, text="Operações binárias")
 
         self.input_img_frame = ttk.Frame(self.frame)
         self.input_img_label = ttk.Label(self.input_img_frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
@@ -73,8 +73,8 @@ class MainApplication():
         self.and_button = ttk.Button(self.binary_btns_frame, text="AND", command=self._and)
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
 
-        self.filters_frame = ttk.LabelFrame(self.buttons_frame, text="Filters")
-        self.mask_size_frame = ttk.LabelFrame(self.filters_frame, text="Mask size")
+        self.filters_frame = ttk.LabelFrame(self.buttons_frame, text="Filtros")
+        self.mask_size_frame = ttk.LabelFrame(self.filters_frame, text="Tamanho da máscara")
         self.mask_size_value = tk.IntVar(value=3)
         self.mask_size_3x3 = ttk.Radiobutton(self.mask_size_frame, text="3x3", variable=self.mask_size_value, value=3)
         self.mask_size_5x5 = ttk.Radiobutton(self.mask_size_frame, text="5x5", variable=self.mask_size_value, value=5)
@@ -97,7 +97,7 @@ class MainApplication():
         self.frame.grid()
         self.input_img_frame.grid(column=0, row=0, sticky='n')
         self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
-        self.buttons_frame.grid(column=2, row=0, rowspan=10)
+        self.buttons_frame.grid(column=2, row=0, rowspan=10, sticky='n')
         self.output_img_frame.grid(column=3, row=0, sticky='n')
         self.output_img_label.grid(column=0, row=0, padx=20, pady=20)
         self.open_button.grid(column=0)
@@ -140,10 +140,10 @@ class MainApplication():
             self.limiar_entry.grid(column=0)
             self.limiarize_button.grid(column=0)
 
-            self.binary_btns_frame.grid(column=0, row=20, sticky='we')
-            self.not_button.grid(column=0, row=0)
-            self.and_button.grid(column=1, row=0)
-            self.or_button.grid(column=2, row=0)
+            self.binary_btns_frame.grid(column=0, sticky='we')
+            self.not_button.grid(column=0, row=0, sticky='we')
+            self.and_button.grid(column=1, row=0, sticky='we')
+            self.or_button.grid(column=2, row=0, sticky='we')
 
             self.filters_frame.grid(column=0, sticky='we')
             self.min_button.grid(column=0, row=0, sticky='we')
