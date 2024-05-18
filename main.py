@@ -717,14 +717,16 @@ class MainApplication():
         start = (self.subim_x_start_value.get(), self.subim_y_start_value.get())
         length = (self.subim_x_length_value.get(), self.subim_y_length_value.get())
         
-        out_im_data = process.subim(im, start, length)
-        out_im = Image.new(im.mode, (length[0], length[1]))
-        out_im.putdata(out_im_data)
+        try:
+            out_im_data = process.subim(im, start, length)
+            out_im = Image.new(im.mode, (length[0], length[1]))
+            out_im.putdata(out_im_data)
+                
+            self.output_img = out_im
             
-        self.output_img = out_im
-        
-        self._show_image(self.output_img, self.output_img_label)
-
+            self._show_image(self.output_img, self.output_img_label)
+        except IndexError:
+            showinfo("IndexError", "Índice inexistente")
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
