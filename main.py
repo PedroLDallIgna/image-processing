@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog as fd
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showerror, showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
 import matplotlib
@@ -730,7 +730,11 @@ class MainApplication():
             
             self._show_image(self.output_img, self.output_img_label)
         except IndexError:
-            showinfo("IndexError", "Índice inexistente")
+            showerror("IndexError", "Impossível selecionar imagem.")
+        except ZeroDivisionError:
+            showerror("ZeroDivisionError", "Tamanho da imagem resultante é zero. Modifique os valores.")
+        except ValueError:
+            showerror("ValueError", "Tamanho da imagem resultante é zero. Modifique os valores.")
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
