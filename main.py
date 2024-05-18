@@ -639,7 +639,7 @@ class MainApplication():
         
         def addition():
             im = self.input_img
-            out_im_data = process.add_constant(im, self.addition_value.get())
+            out_im_data = process.arithmetic(im, self.addition_value.get(), '+')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
             
@@ -649,7 +649,7 @@ class MainApplication():
             
         def subtraction():
             im = self.input_img
-            out_im_data = process.subt_constant(im, self.subtraction_value.get())
+            out_im_data = process.arithmetic(im, self.subtraction_value.get(), '-')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
             
@@ -659,7 +659,7 @@ class MainApplication():
             
         def multiplication():
             im = self.input_img
-            out_im_data = process.multiply_constant(im, self.multiplication_value.get())
+            out_im_data = process.arithmetic(im, self.multiplication_value.get(), '*')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
             
@@ -669,7 +669,7 @@ class MainApplication():
             
         def division():
             im = self.input_img
-            out_im_data = process.divide_constant(im, self.division_value.get())
+            out_im_data = process.arithmetic(im, self.division_value.get(), '/')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
             
