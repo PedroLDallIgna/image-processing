@@ -3,7 +3,8 @@ from tkinter import ttk, filedialog as fd
 from tkinter.messagebox import showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
-import matplotlib 
+import matplotlib
+from pyparsing import col 
 import process
 
 matplotlib.use('TkAgg')
@@ -39,8 +40,10 @@ class MainApplication():
         self.change_img2_button = ttk.Button(self.input_img2_frame, text="Trocar imagem", command=self._select_image_2, width=27)
         self.remove_img2_button = ttk.Button(self.input_img2_frame, text="Remover imagem", command=self._remove_image_2, width=27)
         
-        self.flip_vertically_button = ttk.Button(self.buttons_frame, text="Inverter verticalmente", command=self._flip_vertically, width=27)
-        self.flip_horizontally_button = ttk.Button(self.buttons_frame, text="Inverter horizontalmente", command=self._flip_horizontally, width=27)
+        self.flips_frame = ttk.Labelframe(self.buttons_frame, text="Inversões")
+        self.flip_vertically_button = ttk.Button(self.flips_frame, text="Vertical", command=self._flip_vertically)
+        self.flip_horizontally_button = ttk.Button(self.flips_frame, text="Horizontal", command=self._flip_horizontally)
+        
         self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width=27)
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
         self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width=27)
@@ -124,8 +127,11 @@ class MainApplication():
 
             # show the action buttons
             self.open_button2.grid(column=0, sticky='we')
-            self.flip_vertically_button.grid(column=0)
-            self.flip_horizontally_button.grid(column=0)
+            
+            self.flips_frame.grid(column=0, sticky='we')
+            self.flip_vertically_button.pack(side='left', expand=True, fill='x')
+            self.flip_horizontally_button.pack(side='left', expand=True, fill='x')
+            
             self.grayscale_button.grid(column=0)
             self.negative_button.grid(column=0)
             self.histogram_button.grid(column=0)
@@ -141,9 +147,9 @@ class MainApplication():
             self.limiarize_button.grid(column=0)
 
             self.binary_btns_frame.grid(column=0, sticky='we')
-            self.not_button.grid(column=0, row=0, sticky='we')
-            self.and_button.grid(column=1, row=0, sticky='we')
-            self.or_button.grid(column=2, row=0, sticky='we')
+            self.not_button.pack(side='left', expand=True, fill='x')
+            self.and_button.pack(side='left', expand=True, fill='x')
+            self.or_button.pack(side='left', expand=True, fill='x')
 
             self.filters_frame.grid(column=0, sticky='we')
             self.min_button.grid(column=0, row=0, sticky='we')
@@ -296,7 +302,7 @@ class MainApplication():
 
     def _flip_vertically(self):
         """Vertically flips the image"""
-        image = self.output_img
+        image = self.input_img
         img_data = self._unflat_data(list(image.getdata()), image.height, image.width)
         flipped_img = Image.new(image.mode, image.size)
         flipped_img_data = []
@@ -310,7 +316,7 @@ class MainApplication():
 
     def _flip_horizontally(self):
         """Horizontally flips the image"""
-        image = self.output_img
+        image = self.input_img
         img_data = self._unflat_data(list(image.getdata()), image.height, image.width)
         flipped_img = Image.new(image.mode, image.size)
         flipped_img_data = []
