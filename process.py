@@ -339,3 +339,46 @@ def filter(im, type, index=None, mask_size=3):
 
     # return a flat list (list with tuple of pixels)
     return reflat_data(out_im_data)
+
+def trunc_pixel(pixel):
+    return 255 if pixel > 255 else (0 if pixel < 0 else pixel)
+
+def add_constant(im, constant):
+    im_data = get_image_data(im)
+    
+    for band_i in range(len(im_data)):
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = im_data[band_i][pixel_i] + constant
+            im_data[band_i][pixel_i] = trunc_pixel(new_pixel)
+            
+    return reflat_data(im_data)
+
+def subt_constant(im, constant):
+    im_data = get_image_data(im)
+    
+    for band_i in range(len(im_data)):
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = im_data[band_i][pixel_i] - constant
+            im_data[band_i][pixel_i] = trunc_pixel(new_pixel)
+            
+    return reflat_data(im_data)
+
+def multiply_constant(im, constant):
+    im_data = get_image_data(im)
+    
+    for band_i in range(len(im_data)):
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = int(im_data[band_i][pixel_i] * constant)
+            im_data[band_i][pixel_i] = trunc_pixel(new_pixel)
+            
+    return reflat_data(im_data)
+
+def divide_constant(im, constant):
+    im_data = get_image_data(im)
+    
+    for band_i in range(len(im_data)):
+        for pixel_i in range(len(im_data[band_i])):
+            new_pixel = int(im_data[band_i][pixel_i] / constant)
+            im_data[band_i][pixel_i] = trunc_pixel(new_pixel)
+            
+    return reflat_data(im_data)

@@ -19,7 +19,6 @@ class MainApplication():
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
         self.buttons_frame = ttk.Frame(self.frame, padding=5)
-        self.binary_btns_frame = ttk.LabelFrame(self.buttons_frame, text="Operações binárias")
 
         self.input_img_frame = ttk.Frame(self.frame)
         self.input_img_label = ttk.Label(self.input_img_frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
@@ -39,6 +38,23 @@ class MainApplication():
         self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2)
         self.change_img2_button = ttk.Button(self.input_img2_frame, text="Trocar imagem", command=self._select_image_2, width=27)
         self.remove_img2_button = ttk.Button(self.input_img2_frame, text="Remover imagem", command=self._remove_image_2, width=27)
+        
+        self.arithmetic_ops_frame = ttk.Labelframe(self.buttons_frame, text='Operações artiméticas')
+        self.arithmetic_ops_frame.columnconfigure(0, weight=4)
+        self.arithmetic_ops_frame.columnconfigure(1, weight=1)
+        
+        self.addition_value = tk.IntVar(value=0)
+        self.addition_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.addition_value, width=5, justify='right')
+        self.addition_button = ttk.Button(self.arithmetic_ops_frame, text="Adição", command=self._do_arithmetic_op('+'))
+        self.subtraction_value = tk.IntVar(value=0)
+        self.subtraction_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.subtraction_value, width=5, justify='right')
+        self.subtraction_button = ttk.Button(self.arithmetic_ops_frame, text="Subtração", command=self._do_arithmetic_op('-'))
+        self.multiplication_value = tk.DoubleVar(value=1.0)
+        self.multiplication_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.multiplication_value, width=5, justify='right')
+        self.multiplication_button = ttk.Button(self.arithmetic_ops_frame, text="Multiplicação", command=self._do_arithmetic_op('*'))
+        self.division_value = tk.DoubleVar(value=1.0)
+        self.division_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.division_value, width=5, justify='right')
+        self.division_button = ttk.Button(self.arithmetic_ops_frame, text="Divisão", command=self._do_arithmetic_op('/'))
         
         self.flips_frame = ttk.Labelframe(self.buttons_frame, text="Inversões")
         self.flip_vertically_button = ttk.Button(self.flips_frame, text="Vertical", command=self._flip_vertically)
@@ -72,12 +88,13 @@ class MainApplication():
         self.blending_slider.bind("<ButtonRelease-1>", self._blending)
         self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
+        self.binary_btns_frame = ttk.Labelframe(self.buttons_frame, text="Operações binárias")
         self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._not)
         self.and_button = ttk.Button(self.binary_btns_frame, text="AND", command=self._and)
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
 
-        self.filters_frame = ttk.LabelFrame(self.buttons_frame, text="Filtros")
-        self.mask_size_frame = ttk.LabelFrame(self.filters_frame, text="Tamanho da máscara")
+        self.filters_frame = ttk.Labelframe(self.buttons_frame, text="Filtros")
+        self.mask_size_frame = ttk.Labelframe(self.filters_frame, text="Tamanho da máscara")
         self.mask_size_value = tk.IntVar(value=3)
         self.mask_size_3x3 = ttk.Radiobutton(self.mask_size_frame, text="3x3", variable=self.mask_size_value, value=3)
         self.mask_size_5x5 = ttk.Radiobutton(self.mask_size_frame, text="5x5", variable=self.mask_size_value, value=5)
@@ -90,8 +107,7 @@ class MainApplication():
         self.median_button = ttk.Button(self.filters_frame, text="MEDIAN", command=self._median)
         
         self.order_filter_frame = ttk.Frame(self.filters_frame)
-        self.order_value = tk.IntVar()
-        self.order_value.set(0)
+        self.order_value = tk.IntVar(value=0)
         self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value)
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
@@ -127,6 +143,16 @@ class MainApplication():
 
             # show the action buttons
             self.open_button2.grid(column=0, sticky='we')
+            
+            self.arithmetic_ops_frame.grid(column=0, sticky='we')
+            self.addition_button.grid(column=0, row=0, sticky='we')
+            self.addition_entry.grid(column=1, row=0, sticky='e')
+            self.subtraction_button.grid(column=0, row=1, sticky='we')
+            self.subtraction_entry.grid(column=1, row=1, sticky='e')
+            self.multiplication_button.grid(column=0, row=2, sticky='we')
+            self.multiplication_entry.grid(column=1, row=2, sticky='e')
+            self.division_button.grid(column=0, row=3, sticky='we')
+            self.division_entry.grid(column=1, row=3, sticky='e')
             
             self.flips_frame.grid(column=0, sticky='we')
             self.flip_vertically_button.pack(side='left', expand=True, fill='x')
@@ -608,7 +634,57 @@ class MainApplication():
         
         except IndexError:
             showinfo("IndexError", "Índice inexistente")
-
+            
+    def _do_arithmetic_op(self, op):
+        
+        def addition():
+            im = self.input_img
+            out_im_data = process.add_constant(im, self.addition_value.get())
+            out_im = Image.new(im.mode, im.size)
+            out_im.putdata(out_im_data)
+            
+            self.output_img = out_im
+            
+            self._show_image(self.output_img, self.output_img_label)
+            
+        def subtraction():
+            im = self.input_img
+            out_im_data = process.subt_constant(im, self.subtraction_value.get())
+            out_im = Image.new(im.mode, im.size)
+            out_im.putdata(out_im_data)
+            
+            self.output_img = out_im
+            
+            self._show_image(self.output_img, self.output_img_label)
+            
+        def multiplication():
+            im = self.input_img
+            out_im_data = process.multiply_constant(im, self.multiplication_value.get())
+            out_im = Image.new(im.mode, im.size)
+            out_im.putdata(out_im_data)
+            
+            self.output_img = out_im
+            
+            self._show_image(self.output_img, self.output_img_label)
+            
+        def division():
+            im = self.input_img
+            out_im_data = process.divide_constant(im, self.division_value.get())
+            out_im = Image.new(im.mode, im.size)
+            out_im.putdata(out_im_data)
+            
+            self.output_img = out_im
+            
+            self._show_image(self.output_img, self.output_img_label)
+            
+        if (op == '+'):
+            return addition
+        if (op == '-'):
+            return subtraction
+        if (op == '*'):
+            return multiplication
+        if (op == '/'):
+            return division
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
