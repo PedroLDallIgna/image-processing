@@ -1,3 +1,4 @@
+from ast import Tuple
 from math import floor
 from PIL import Image
 
@@ -359,3 +360,18 @@ def arithmetic(im, constant, op):
             im_data[band_i][pixel_i] = ops[op](im_data[band_i][pixel_i], constant)
             
     return reflat_data(im_data)
+
+def subim(im, start: Tuple, length: Tuple):
+    im_data = get_image_data(im)
+
+    out_im_data = []
+    
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for row in range(start[1], start[1] + length[1]):
+            for col in range(start[0], start[0] + length[0]):
+                pixel = im_data[band_i][row * im.width + col]
+                
+                out_im_data[band_i].append(pixel)
+                
+    return reflat_data(out_im_data)

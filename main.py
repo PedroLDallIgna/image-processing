@@ -42,7 +42,6 @@ class MainApplication():
         self.arithmetic_ops_frame = ttk.Labelframe(self.buttons_frame, text='Operações artiméticas')
         self.arithmetic_ops_frame.columnconfigure(0, weight=4)
         self.arithmetic_ops_frame.columnconfigure(1, weight=1)
-        
         self.addition_value = tk.IntVar(value=0)
         self.addition_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.addition_value, width=5, justify='right')
         self.addition_button = ttk.Button(self.arithmetic_ops_frame, text="Adição", command=self._do_arithmetic_op('+'))
@@ -55,6 +54,21 @@ class MainApplication():
         self.division_value = tk.DoubleVar(value=1.0)
         self.division_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.division_value, width=5, justify='right')
         self.division_button = ttk.Button(self.arithmetic_ops_frame, text="Divisão", command=self._do_arithmetic_op('/'))
+        
+        self.subim_op_frame = ttk.Labelframe(self.buttons_frame, text='Sub-Imagem')
+        self.subim_x_start_label = ttk.Label(self.subim_op_frame, text="Início(x)")
+        self.subim_x_start_value = tk.IntVar()
+        self.subim_x_start_entry = ttk.Entry(self.subim_op_frame, textvariable=self.subim_x_start_value, width=5)
+        self.subim_x_length_label = ttk.Label(self.subim_op_frame, text="Comprimento")
+        self.subim_x_length_value = tk.IntVar()
+        self.subim_x_length_entry = ttk.Entry(self.subim_op_frame, textvariable=self.subim_x_length_value, width=5)
+        self.subim_y_start_label = ttk.Label(self.subim_op_frame, text="Início(y)")
+        self.subim_y_start_value = tk.IntVar()
+        self.subim_y_start_entry = ttk.Entry(self.subim_op_frame, textvariable=self.subim_y_start_value, width=5)
+        self.subim_y_length_label = ttk.Label(self.subim_op_frame, text="Comprimento")
+        self.subim_y_length_value = tk.IntVar()
+        self.subim_y_length_entry = ttk.Entry(self.subim_op_frame, textvariable=self.subim_y_length_value, width=5)
+        self.subim_op_button = ttk.Button(self.subim_op_frame, text="Selecionar", command=self._do_subim)
         
         self.flips_frame = ttk.Labelframe(self.buttons_frame, text="Inversões")
         self.flip_vertically_button = ttk.Button(self.flips_frame, text="Vertical", command=self._flip_vertically)
@@ -153,6 +167,17 @@ class MainApplication():
             self.multiplication_entry.grid(column=1, row=2, sticky='e')
             self.division_button.grid(column=0, row=3, sticky='we')
             self.division_entry.grid(column=1, row=3, sticky='e')
+            
+            self.subim_op_frame.grid(column=0, sticky='we')
+            self.subim_x_start_label.grid(column=0, row=0)
+            self.subim_x_start_entry.grid(column=1, row=0)
+            self.subim_x_length_label.grid(column=2, row=0)
+            self.subim_x_length_entry.grid(column=3, row=0)
+            self.subim_y_start_label.grid(column=0, row=1)
+            self.subim_y_start_entry.grid(column=1, row=1)
+            self.subim_y_length_label.grid(column=2, row=1)
+            self.subim_y_length_entry.grid(column=3, row=1)
+            self.subim_op_button.grid(column=2, row=2, columnspan=2, sticky='we')
             
             self.flips_frame.grid(column=0, sticky='we')
             self.flip_vertically_button.pack(side='left', expand=True, fill='x')
@@ -685,6 +710,21 @@ class MainApplication():
             return multiplication
         if (op == '/'):
             return division
+        
+    def _do_subim(self):
+        im = self.input_img
+        
+        start = (self.subim_x_start_value.get(), self.subim_y_start_value.get())
+        length = (self.subim_x_length_value.get(), self.subim_y_length_value.get())
+        
+        out_im_data = process.subim(im, start, length)
+        out_im = Image.new(im.mode, (length[0], length[1]))
+        out_im.putdata(out_im_data)
+            
+        self.output_img = out_im
+        
+        self._show_image(self.output_img, self.output_img_label)
+
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
