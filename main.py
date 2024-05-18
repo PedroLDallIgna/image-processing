@@ -76,13 +76,22 @@ class MainApplication():
         
         self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width=27)
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
-        self.sum_images_button = ttk.Button(self.buttons_frame, text="Somar imagens", command=self._sum_images, width=27)
-        self.subt_images_button = ttk.Button(self.buttons_frame, text="Subtrair imagens", command=self._subt_images, width=27)
+        
         self.limiar_value = tk.IntVar(value=127)
         self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width=27)
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width=27)
+        
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width=27)
-        self.concat_button = ttk.Button(self.buttons_frame, text="Concatenar", command=self._concat_images, width=27)
+        
+        self.btw_img_ops = ttk.Labelframe(self.buttons_frame, text="Operações entre imagens")
+        self.sum_images_button = ttk.Button(self.btw_img_ops, text="Somar imagens", command=self._sum_images)
+        self.subt_images_button = ttk.Button(self.btw_img_ops, text="Subtrair imagens", command=self._subt_images)
+        self.concat_button = ttk.Button(self.btw_img_ops, text="Concatenar", command=self._concat_images)
+        self.blending_value = tk.IntVar(value=50)
+        self.blending_label = ttk.Label(self.btw_img_ops, text=f"Blending: {int(self.blending_value.get())}%", width=27, anchor='w')
+        self.blending_slider = ttk.Scale(self.btw_img_ops, from_=0, to=100, orient='horizontal', variable=self.blending_value)
+        self.blending_slider.bind("<ButtonRelease-1>", self._blending)
+        self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
         self.brightness_value = tk.IntVar(value=0)
         self.brightness_label = ttk.Label(self.buttons_frame, text=f"Brilho: {int(self.brightness_value.get())}%", width=27, anchor='w')
@@ -95,12 +104,6 @@ class MainApplication():
         self.contrast_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.contrast_value)
         self.contrast_slider.bind("<ButtonRelease-1>", self._contrast)
         self.contrast_slider.bind("<Button1-Motion>", lambda event: self.contrast_label.config(text=f"Contraste: {int(self.contrast_value.get())}%"))
-
-        self.blending_value = tk.IntVar(value=50)
-        self.blending_label = ttk.Label(self.buttons_frame, text=f"Blending: {int(self.blending_value.get())}%", width=27, anchor='w')
-        self.blending_slider = ttk.Scale(self.buttons_frame, from_=0, to=100, orient='horizontal', variable=self.blending_value)
-        self.blending_slider.bind("<ButtonRelease-1>", self._blending)
-        self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
         self.binary_btns_frame = ttk.Labelframe(self.buttons_frame, text="Operações binárias")
         self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._not)
@@ -243,11 +246,14 @@ class MainApplication():
             self.change_img2_button.grid(column=0, row=1)
             self.remove_img2_button.grid(column=0, row=2)
             
-            self.sum_images_button.grid(column=0)
-            self.subt_images_button.grid(column=0)
-            self.concat_button.grid(column=0)
-            self.blending_label.grid(column=0)
-            self.blending_slider.grid(column=0, sticky='we')
+            self.btw_img_ops.grid(column=0, sticky='we')
+            self.btw_img_ops.columnconfigure(0, weight=1)
+            self.btw_img_ops.columnconfigure(1, weight=1)
+            self.sum_images_button.grid(column=0, row=0, sticky='we')
+            self.subt_images_button.grid(column=1, row=0, sticky='we')
+            self.concat_button.grid(column=0, row=1, sticky='we')
+            self.blending_label.grid(column=0, columnspan=2, row=2, sticky='we')
+            self.blending_slider.grid(column=0, columnspan=2, row=3, sticky='we')
 
         except:
             print("imagem não selecionada")
