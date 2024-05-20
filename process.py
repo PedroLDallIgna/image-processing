@@ -375,3 +375,45 @@ def subim(im, start: Tuple, length: Tuple):
                 out_im_data[band_i].append(pixel)
                 
     return reflat_data(out_im_data)
+
+def conservative_suavization(im, mask_size=3):
+
+    if (mask_size % 2 == 0):
+        raise ValueError
+    mask_space = floor(mask_size / 2)
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    for band in range(len(im_data)):
+        out_im_data.append([]) # appends an empty list for the band(r,g or b)
+        for row in range(im.height):
+            for col in range(im.width):
+                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
+                if (row < mask_space or row > im.height-mask_space-1 or col < mask_space or col > im.width-mask_space-1):
+                    out_im_data[band].append(im_data[band][row * im.width + col])
+                
+                # if not...
+                else:
+                    # gets the mask of the given mask size
+                    mask = [im_data[band][i * im.width + j] for i in range(row-mask_space, row+mask_space+1)
+                                                            for j in range(col-mask_space, col+mask_space+1)]
+                    
+                    # gets the central pixel value and removes from mask to not influentiate
+                    pixel = im_data[band][row * im.width + col]
+                    mask.remove(pixel)
+
+                    # gets min and max values of the mask
+                    min_max = (min(mask), max(mask))
+                    
+                    # if the pixel value is lower than the min, pixel will be min
+                    if (pixel < min_max[0]):
+                        pixel = min_max[0]
+                    # if the pixel value is greater than the max, pixel will be max
+                    elif (pixel > min_max[1]):
+                        pixel = min_max[1]
+
+                    # appends the pixel value
+                    out_im_data[band].append(pixel)
+
+    # return a flat list (list with tuple of pixels)
+    return reflat_data(out_im_data)

@@ -127,6 +127,8 @@ class MainApplication():
         self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value)
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
+        self.conservative_suavization_button = ttk.Button(self.filters_frame, text="Suav. Conservativa", command=self._conservative_suavization)
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -213,8 +215,9 @@ class MainApplication():
             self.mean_button.grid(column=0, row=1, sticky='we')
             self.max_button.grid(column=1, row=0, sticky='we')
             self.median_button.grid(column=1, row=1, sticky='we')
+            self.conservative_suavization_button.grid(column=0, columnspan=2, row=2, sticky='we')
             
-            self.order_filter_frame.grid(column=0, row=2, columnspan=2, sticky='we')
+            self.order_filter_frame.grid(column=0, row=3, columnspan=2, sticky='we')
             self.order_entry.grid(column=0, row=0, sticky='we')
             self.order_button.grid(column=1, row=0, sticky='we')
 
@@ -668,6 +671,18 @@ class MainApplication():
         
         except IndexError:
             showinfo("IndexError", "Índice inexistente")
+
+    def _conservative_suavization(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.conservative_suavization(im, mask_size=self.mask_size_value.get())
+    
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
             
     def _do_arithmetic_op(self, op):
         
