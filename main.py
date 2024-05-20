@@ -4,7 +4,6 @@ from tkinter.messagebox import showerror, showinfo
 from tkinter.constants import *
 from PIL import Image, ImageTk
 import matplotlib
-from pyparsing import col 
 import process
 
 matplotlib.use('TkAgg')
