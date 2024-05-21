@@ -128,6 +128,7 @@ class MainApplication():
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
         self.conservative_suavization_button = ttk.Button(self.filters_frame, text="Suav. Conservativa", command=self._conservative_suavization)
+        self.gaussian_filter_button = ttk.Button(self.buttons_frame, text="Filtro gaussiano", command=self._gaussian_filter)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -198,6 +199,7 @@ class MainApplication():
             self.brightness_slider.grid(column=0, sticky="we")
             self.contrast_label.grid(column=0)
             self.contrast_slider.grid(column=0, sticky="we")
+            self.gaussian_filter_button.grid(column=0, sticky='we')
             
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -684,6 +686,19 @@ class MainApplication():
 
         self._show_image(self.output_img, self.output_img_label)
             
+    # TODO: add entry for sigma value
+    def _gaussian_filter(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.gaussian_filter(im, sigma=1)
+    
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
     def _do_arithmetic_op(self, op):
         
         def addition():

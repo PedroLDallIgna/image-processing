@@ -1,6 +1,7 @@
 from ast import Tuple
 from math import floor
 from PIL import Image
+import math
 
 def get_max_and_min(data):
     """Returns a tuple with min and max value of a list (image color band)"""
@@ -416,4 +417,44 @@ def conservative_suavization(im, mask_size=3):
                     out_im_data[band].append(pixel)
 
     # return a flat list (list with tuple of pixels)
+    return reflat_data(out_im_data)
+
+def gaussian_filter(im, sigma):
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    gaussian_kernel = []
+    for i in range(-2, 3):
+        for j in range(-2, 3):
+            coefficient = (1 / (2 * math.pi * (sigma ** 2)))
+            result = coefficient * math.exp(- ((i ** 2 + j ** 2) / (2 * sigma ** 2)))
+            gaussian_kernel.append(result)
+    
+    # sum of gaussian kernel values
+    gaussian_kernel_sum = sum(gaussian_kernel)
+
+    # normalize gaussian kernel
+    for i in range(len(gaussian_kernel)):
+        gaussian_kernel[i] /= gaussian_kernel_sum
+
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for row in range(im.height):
+            for col in range(im.width):
+                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
+                if (row < 2 or row > im.height-3 or col < 2 or col > im.width-3):
+                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
+                
+                # if not...
+                else:
+                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-2, row+3)
+                                                                   for y in range(col-2, col+3)]
+
+                    for item_i in range(len(im_kernel)):
+                        im_kernel[item_i] *= gaussian_kernel[item_i]
+
+                    result_pixel = sum(im_kernel)
+
+                    out_im_data[band_i].append(math.floor(result_pixel))
+
     return reflat_data(out_im_data)
