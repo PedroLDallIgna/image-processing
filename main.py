@@ -128,7 +128,13 @@ class MainApplication():
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
         self.conservative_suavization_button = ttk.Button(self.filters_frame, text="Suav. Conservativa", command=self._conservative_suavization)
-        self.gaussian_filter_button = ttk.Button(self.buttons_frame, text="Filtro gaussiano", command=self._gaussian_filter)
+        
+        self.gaussian_filter_frame = ttk.Frame(self.buttons_frame)
+        self.gaussian_filter_frame.columnconfigure(0, weight=4)
+        self.gaussian_filter_frame.columnconfigure(1, weight=1)
+        self.gaussian_filter_sigma_value = tk.DoubleVar(value=0.1)
+        self.gaussian_filter_sigma_entry = ttk.Entry(self.gaussian_filter_frame, textvariable=self.gaussian_filter_sigma_value, width=5, justify='right')
+        self.gaussian_filter_button = ttk.Button(self.gaussian_filter_frame, text="Filtro gaussiano", command=self._gaussian_filter)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -199,7 +205,10 @@ class MainApplication():
             self.brightness_slider.grid(column=0, sticky="we")
             self.contrast_label.grid(column=0)
             self.contrast_slider.grid(column=0, sticky="we")
-            self.gaussian_filter_button.grid(column=0, sticky='we')
+
+            self.gaussian_filter_frame.grid(column=0, sticky='we')
+            self.gaussian_filter_button.grid(column=0, row=0, sticky='we')
+            self.gaussian_filter_sigma_entry.grid(column=1, row=0, sticky='e')
             
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -686,12 +695,11 @@ class MainApplication():
 
         self._show_image(self.output_img, self.output_img_label)
             
-    # TODO: add entry for sigma value
     def _gaussian_filter(self):
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.gaussian_filter(im, sigma=1)
+        out_im_data = process.gaussian_filter(im, sigma=self.gaussian_filter_sigma_value.get())
     
         out_im.putdata(out_im_data)
 
