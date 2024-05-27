@@ -354,7 +354,8 @@ class MainApplication():
         filename = fd.asksaveasfilename(
             title='Open a file',
             initialdir='./',
-            filetypes=filetypes
+            filetypes=filetypes,
+            defaultextension=filetypes
         )
 
         return filename
