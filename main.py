@@ -136,6 +136,10 @@ class MainApplication():
         self.gaussian_filter_sigma_entry = ttk.Entry(self.gaussian_filter_frame, textvariable=self.gaussian_filter_sigma_value, width=5, justify='right')
         self.gaussian_filter_button = ttk.Button(self.gaussian_filter_frame, text="Filtro gaussiano", command=self._gaussian_filter)
 
+        self.prewitt_button = ttk.Button(self.buttons_frame, text="Prewitt", command=self._prewitt)
+        self.sobel_button = ttk.Button(self.buttons_frame, text="Sobel", command=self._sobel)
+        self.laplace_button = ttk.Button(self.buttons_frame, text="Laplace", command=self._laplace)
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -209,6 +213,10 @@ class MainApplication():
             self.gaussian_filter_frame.grid(column=0, sticky='we')
             self.gaussian_filter_button.grid(column=0, row=0, sticky='we')
             self.gaussian_filter_sigma_entry.grid(column=1, row=0, sticky='e')
+
+            self.prewitt_button.grid(column=0, sticky='we')
+            self.sobel_button.grid(column=0, sticky='we')
+            self.laplace_button.grid(column=0, sticky='we')
             
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -778,6 +786,42 @@ class MainApplication():
             showerror("ZeroDivisionError", "Tamanho da imagem resultante é zero. Modifique os valores.")
         except ValueError:
             showerror("ValueError", "Tamanho da imagem resultante é zero. Modifique os valores.")
+
+    def _prewitt(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.prewitt_border_detection(im)
+    
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _sobel(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.sobel_border_detection(im)
+    
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _laplace(self):
+        im = self.input_img
+
+        out_im = Image.new(im.mode, im.size)
+        out_im_data = process.laplace_border_detection(im)
+    
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
