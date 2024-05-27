@@ -22,11 +22,11 @@ class MainApplication():
         self.input_img_frame = ttk.Frame(self.frame)
         self.input_img_label = ttk.Label(self.input_img_frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
         self.input_img = None
-        
+
         self.input_img2_frame = ttk.Frame(self.frame)
         self.input_img2_label = ttk.Label(self.input_img2_frame, text="Imagem de entrada 2", width=40, anchor=CENTER) # label for selected image
         self.input_img2 = None
-        
+
         self.output_img_frame = ttk.Frame(self.frame)
         self.output_img_label = ttk.Label(self.output_img_frame, text="Imagem de saída", width=40, anchor=CENTER) # label for transformed image
         self.output_img = None
@@ -37,7 +37,7 @@ class MainApplication():
         self.open_button2 = ttk.Button(self.buttons_frame, text="Abrir nova imagem", command=self._select_image_2)
         self.change_img2_button = ttk.Button(self.input_img2_frame, text="Trocar imagem", command=self._select_image_2, width=27)
         self.remove_img2_button = ttk.Button(self.input_img2_frame, text="Remover imagem", command=self._remove_image_2, width=27)
-        
+
         self.arithmetic_ops_frame = ttk.Labelframe(self.buttons_frame, text='Operações artiméticas')
         self.arithmetic_ops_frame.columnconfigure(0, weight=4)
         self.arithmetic_ops_frame.columnconfigure(1, weight=1)
@@ -53,7 +53,7 @@ class MainApplication():
         self.division_value = tk.DoubleVar(value=1.0)
         self.division_entry = ttk.Entry(self.arithmetic_ops_frame, textvariable=self.division_value, width=5, justify='right')
         self.division_button = ttk.Button(self.arithmetic_ops_frame, text="Divisão", command=self._do_arithmetic_op('/'))
-        
+
         self.subim_op_frame = ttk.Labelframe(self.buttons_frame, text='Sub-Imagem')
         self.subim_x_start_label = ttk.Label(self.subim_op_frame, text="Início(x)")
         self.subim_x_start_value = tk.IntVar()
@@ -68,20 +68,20 @@ class MainApplication():
         self.subim_y_length_value = tk.IntVar()
         self.subim_y_length_entry = ttk.Entry(self.subim_op_frame, textvariable=self.subim_y_length_value, width=6)
         self.subim_op_button = ttk.Button(self.subim_op_frame, text="Selecionar", command=self._do_subim)
-        
+
         self.flips_frame = ttk.Labelframe(self.buttons_frame, text="Inversões")
         self.flip_vertically_button = ttk.Button(self.flips_frame, text="Vertical", command=self._flip_vertically)
         self.flip_horizontally_button = ttk.Button(self.flips_frame, text="Horizontal", command=self._flip_horizontally)
-        
+
         self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width=27)
         self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
-        
+
         self.limiar_value = tk.IntVar(value=127)
         self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width=27)
         self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width=27)
-        
+
         self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width=27)
-        
+
         self.btw_img_ops = ttk.Labelframe(self.buttons_frame, text="Operações entre imagens")
         self.sum_images_button = ttk.Button(self.btw_img_ops, text="Somar imagens", command=self._sum_images)
         self.subt_images_button = ttk.Button(self.btw_img_ops, text="Subtrair imagens", command=self._subt_images)
@@ -121,14 +121,14 @@ class MainApplication():
         self.max_button = ttk.Button(self.filters_frame, text="MAX", command=self._max)
         self.mean_button = ttk.Button(self.filters_frame, text="MEAN", command=self._mean)
         self.median_button = ttk.Button(self.filters_frame, text="MEDIAN", command=self._median)
-        
+
         self.order_filter_frame = ttk.Frame(self.filters_frame)
         self.order_value = tk.IntVar(value=0)
         self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value)
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
         self.conservative_suavization_button = ttk.Button(self.filters_frame, text="Suav. Conservativa", command=self._conservative_suavization)
-        
+
         self.gaussian_filter_frame = ttk.Frame(self.buttons_frame)
         self.gaussian_filter_frame.columnconfigure(0, weight=4)
         self.gaussian_filter_frame.columnconfigure(1, weight=1)
@@ -158,21 +158,21 @@ class MainApplication():
         """Action of the open button"""
         try:
             filename = self._openfilename()
-            
-            self.input_img = Image.open(filename) # open image with pillow    
+
+            self.input_img = Image.open(filename) # open image with pillow
             self.open_button.config(text="Trocar Imagem")
 
             self.output_img = self.input_img.copy()
 
             # shows input image in the label
             self._show_image(self.input_img, self.input_img_label)
-            
+
             # shows output image in the label
             self._show_image(self.output_img, self.output_img_label)
 
             # show the action buttons
             self.open_button2.grid(column=0, sticky='we')
-            
+
             self.arithmetic_ops_frame.grid(column=0, sticky='we')
             self.addition_button.grid(column=0, row=0, sticky='we')
             self.addition_entry.grid(column=1, row=0, sticky='e')
@@ -182,7 +182,7 @@ class MainApplication():
             self.multiplication_entry.grid(column=1, row=2, sticky='e')
             self.division_button.grid(column=0, row=3, sticky='we')
             self.division_entry.grid(column=1, row=3, sticky='e')
-            
+
             self.subim_op_frame.grid(column=0, sticky='we')
             self.subim_op_frame.columnconfigure(0, weight=1)
             self.subim_op_frame.columnconfigure(1, weight=1)
@@ -197,11 +197,11 @@ class MainApplication():
             self.subim_y_length_label.grid(column=2, row=1)
             self.subim_y_length_entry.grid(column=3, row=1, sticky='we')
             self.subim_op_button.grid(column=2, row=2, columnspan=2, sticky='e')
-            
+
             self.flips_frame.grid(column=0, sticky='we')
             self.flip_vertically_button.pack(side='left', expand=True, fill='x')
             self.flip_horizontally_button.pack(side='left', expand=True, fill='x')
-            
+
             self.grayscale_button.grid(column=0)
             self.negative_button.grid(column=0)
             self.histogram_button.grid(column=0)
@@ -217,10 +217,10 @@ class MainApplication():
             self.prewitt_button.grid(column=0, sticky='we')
             self.sobel_button.grid(column=0, sticky='we')
             self.laplace_button.grid(column=0, sticky='we')
-            
+
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
-            
+
             self.limiar_entry.grid(column=0)
             self.limiarize_button.grid(column=0)
 
@@ -235,7 +235,7 @@ class MainApplication():
             self.max_button.grid(column=1, row=0, sticky='we')
             self.median_button.grid(column=1, row=1, sticky='we')
             self.conservative_suavization_button.grid(column=0, columnspan=2, row=2, sticky='we')
-            
+
             self.order_filter_frame.grid(column=0, row=3, columnspan=2, sticky='we')
             self.order_entry.grid(column=0, row=0, sticky='we')
             self.order_button.grid(column=1, row=0, sticky='we')
@@ -254,19 +254,19 @@ class MainApplication():
         """Action of the open button"""
         try:
             filename = self._openfilename()
-            
-            self.input_img2 = Image.open(filename) # open image with pillow    
+
+            self.input_img2 = Image.open(filename) # open image with pillow
             self.open_button2.grid_remove()
 
             self.input_img2_frame.grid(column=1, row=0, sticky='n')
             self.input_img2_label.grid(column=0, row=0, padx=20, pady=20)
-        
+
             # shows input image in the label
             self._show_image(self.input_img2, self.input_img2_label)
 
             self.change_img2_button.grid(column=0, row=1)
             self.remove_img2_button.grid(column=0, row=2)
-            
+
             self.btw_img_ops.grid(column=0, sticky='we')
             self.btw_img_ops.columnconfigure(0, weight=1)
             self.btw_img_ops.columnconfigure(1, weight=1)
@@ -288,7 +288,7 @@ class MainApplication():
             ('PNG', '*.png'),
             ('TIFF', '*.tiff')
         )
-        
+
         filename = fd.askopenfilename(
             title='Open a file',
             initialdir='./',
@@ -302,13 +302,13 @@ class MainApplication():
         self.change_img2_button.grid_remove()
         self.remove_img2_button.grid_remove()
         self.open_button2.grid(column=0, row=0)
-        
+
         self.input_img2_frame.grid_remove()
 
     def _to_negative(self) -> None:
         """Convert the base image pixels to negative"""
         negative_image = process.to_negative(self.input_img)
-        
+
         self.output_img.putdata(negative_image)
 
         self._show_image(self.output_img, self.output_img_label)
@@ -317,7 +317,7 @@ class MainApplication():
         """Convert the input image to grayscale"""
 
         grayscale_img = None
-        
+
         if (self.input_img.mode != 'L'):
             image = self.input_img
             grayscale_img_data = process.to_grayscale(image)
@@ -329,7 +329,7 @@ class MainApplication():
             grayscale_img = self.input_img.copy()
 
         self.output_img = grayscale_img
-        
+
         self._show_image(self.output_img, self.output_img_label)
 
     def _reset(self) -> None:
@@ -339,7 +339,7 @@ class MainApplication():
 
         reseted_img = self.input_img.copy()
         self.output_img = reseted_img
-        
+
         self._show_image(self.output_img, self.output_img_label)
 
     def _savefilename(self):
@@ -413,7 +413,7 @@ class MainApplication():
         self.output_img = flipped_img
 
         self._show_image(self.output_img, self.output_img_label)
-    
+
 
     def _show_image(self, image, image_label):
         """Shows the given image in the given label reescaling it"""
@@ -477,13 +477,13 @@ class MainApplication():
     def _limiarize(self):
         """Limiarize an image"""
         image = self.input_img
-        
+
         if (image.mode != 'L'):
             grayscale_img = Image.new('L', image.size)
             grayscale_img.putdata(process.to_grayscale(image))
-            
+
             image = grayscale_img.copy()
-            
+
         binary_img_data = process.binarize(image, self.limiar_value.get())
 
         binary_img = Image.new('1', image.size)
@@ -511,7 +511,7 @@ class MainApplication():
         im = self.input_img
 
         out_img_data = process.equalize_histogram(im)
-        
+
         self.output_img.putdata(out_img_data)
 
         self._show_image(self.output_img, self.output_img_label)
@@ -559,7 +559,7 @@ class MainApplication():
 
         if (im.mode != '1'):
             out_im = im
-            
+
             if (im.mode != 'L'):
                 grayscale_im_data = process.to_grayscale(im)
 
@@ -569,7 +569,7 @@ class MainApplication():
             binary_im_data = process.binarize(out_im)
             out_im = Image.new('1', out_im.size)
             out_im.putdata(binary_im_data)
-            
+
             out_im_data = process.not_(out_im)
             out_im.putdata(out_im_data)
 
@@ -632,7 +632,7 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.filter(im, 'min', mask_size=self.mask_size_value.get())
-        
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -644,7 +644,7 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.filter(im, 'max', mask_size=self.mask_size_value.get())
-        
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -656,7 +656,7 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.filter(im, 'mean', mask_size=self.mask_size_value.get())
-        
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -668,7 +668,7 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.filter(im, 'median', mask_size=self.mask_size_value.get())
-        
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -682,13 +682,13 @@ class MainApplication():
 
         try:
             out_im_data = process.filter(im, 'order', mask_size=self.mask_size_value.get(), index=self.order_value.get())
-        
+
             out_im.putdata(out_im_data)
 
             self.output_img = out_im
 
             self._show_image(self.output_img, self.output_img_label)
-        
+
         except IndexError:
             showinfo("IndexError", "Índice inexistente")
 
@@ -697,19 +697,19 @@ class MainApplication():
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.conservative_suavization(im, mask_size=self.mask_size_value.get())
-    
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
 
         self._show_image(self.output_img, self.output_img_label)
-            
+
     def _gaussian_filter(self):
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
         out_im_data = process.gaussian_filter(im, sigma=self.gaussian_filter_sigma_value.get())
-    
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -717,47 +717,47 @@ class MainApplication():
         self._show_image(self.output_img, self.output_img_label)
 
     def _do_arithmetic_op(self, op):
-        
+
         def addition():
             im = self.input_img
             out_im_data = process.arithmetic(im, self.addition_value.get(), '+')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
-            
+
             self.output_img = out_im
-            
+
             self._show_image(self.output_img, self.output_img_label)
-            
+
         def subtraction():
             im = self.input_img
             out_im_data = process.arithmetic(im, self.subtraction_value.get(), '-')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
-            
+
             self.output_img = out_im
-            
+
             self._show_image(self.output_img, self.output_img_label)
-            
+
         def multiplication():
             im = self.input_img
             out_im_data = process.arithmetic(im, self.multiplication_value.get(), '*')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
-            
+
             self.output_img = out_im
-            
+
             self._show_image(self.output_img, self.output_img_label)
-            
+
         def division():
             im = self.input_img
             out_im_data = process.arithmetic(im, self.division_value.get(), '/')
             out_im = Image.new(im.mode, im.size)
             out_im.putdata(out_im_data)
-            
+
             self.output_img = out_im
-            
+
             self._show_image(self.output_img, self.output_img_label)
-            
+
         if (op == '+'):
             return addition
         if (op == '-'):
@@ -766,20 +766,20 @@ class MainApplication():
             return multiplication
         if (op == '/'):
             return division
-        
+
     def _do_subim(self):
         im = self.input_img
-        
+
         start = (self.subim_x_start_value.get(), self.subim_y_start_value.get())
         length = (self.subim_x_length_value.get(), self.subim_y_length_value.get())
-        
+
         try:
             out_im_data = process.subim(im, start, length)
             out_im = Image.new(im.mode, (length[0], length[1]))
             out_im.putdata(out_im_data)
-                
+
             self.output_img = out_im
-            
+
             self._show_image(self.output_img, self.output_img_label)
         except IndexError:
             showerror("IndexError", "Impossível selecionar imagem.")
@@ -792,8 +792,8 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.prewitt_border_detection(im)
-    
+        out_im_data = process.border_detection(im, 'prewitt')
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -804,8 +804,8 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.sobel_border_detection(im)
-    
+        out_im_data = process.border_detection(im, 'sobel')
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im
@@ -816,8 +816,8 @@ class MainApplication():
         im = self.input_img
 
         out_im = Image.new(im.mode, im.size)
-        out_im_data = process.laplace_border_detection(im)
-    
+        out_im_data = process.border_detection(im, 'laplace')
+
         out_im.putdata(out_im_data)
 
         self.output_img = out_im

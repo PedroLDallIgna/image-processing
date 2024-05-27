@@ -459,102 +459,51 @@ def gaussian_filter(im, sigma):
 
     return reflat_data(out_im_data)
 
-def prewitt_border_detection(im):
-    im_data = get_image_data(im)
-    out_im_data = []
+def border_detection(im, bt_type='laplace'):
 
-    prewitt_first_kernel = [[1, 0, -1], [1, 0, -1], [1, 0, -1]]
-    prewitt_second_kernel = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
-
-    for band_i in range(len(im_data)):
-        out_im_data.append([])
-        for row in range(im.height):
-            for col in range(im.width):
-                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
-                if (row < 1 or row > im.height-2 or col < 1 or col > im.width-2):
-                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
-                
-                # if not...
-                else:
-                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-1, row+2)
-                                                                   for y in range(col-1, col+2)]
-
-                    gX = 0
-                    gY = 0
-                    for x in range(3):
-                        for y in range(3):
-                            gX += prewitt_first_kernel[x][y] * im_kernel[x * 3 + y]
-                            gY += prewitt_second_kernel[x][y] * im_kernel[x * 3 + y]
-
-                    result_pixel = math.sqrt(gX**2 + gY**2)
-
-                    out_im_data[band_i].append(math.floor(result_pixel))
-
-    return reflat_data(out_im_data)
-
-def sobel_border_detection(im):
-    im_data = get_image_data(im)
-    out_im_data = []
-
-    sobel_first_kernel = [[1, 0, -1], [2, 0, -2], [1, 0, -1]]
-    sobel_second_kernel = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
-
-    for band_i in range(len(im_data)):
-        out_im_data.append([])
-        for row in range(im.height):
-            for col in range(im.width):
-                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
-                if (row < 1 or row > im.height-2 or col < 1 or col > im.width-2):
-                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
-                
-                # if not...
-                else:
-                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-1, row+2)
-                                                                   for y in range(col-1, col+2)]
-
-                    gX = 0
-                    gY = 0
-                    for x in range(3):
-                        for y in range(3):
-                            gX += sobel_first_kernel[x][y] * im_kernel[x * 3 + y]
-                            gY += sobel_second_kernel[x][y] * im_kernel[x * 3 + y]
-
-                    result_pixel = math.sqrt(gX**2 + gY**2)
-
-                    out_im_data[band_i].append(math.floor(result_pixel))
-
-    return reflat_data(out_im_data)
-
-def laplace_border_detection(im):
-    im_data = get_image_data(im)
-    out_im_data = []
-
-    laplace_first_kernel = [[0, 1, 0], [1, -4, 1], [0, 1, 0]]
-    laplace_second_kernel = [[0, -1, 0], [-1, 4, -1], [0, -1, 0]]
-
-    for band_i in range(len(im_data)):
-        out_im_data.append([])
-        for row in range(im.height):
-            for col in range(im.width):
-                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
-                if (row < 1 or row > im.height-2 or col < 1 or col > im.width-2):
-                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
-                
-                # if not...
-                else:
-                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-1, row+2)
-                                                                   for y in range(col-1, col+2)]
-
-                    gX = 0
-                    gY = 0
-                    for x in range(3):
-                        for y in range(3):
-                            gX += laplace_first_kernel[x][y] * im_kernel[x * 3 + y]
-                            gY += laplace_second_kernel[x][y] * im_kernel[x * 3 + y]
-
-                    result_pixel = math.sqrt(gX**2 + gY**2)
-
-                    out_im_data[band_i].append(math.floor(result_pixel))
+    types_map = {
+        'prewitt': [
+            [[1, 0, -1], [1, 0, -1], [1, 0, -1]],
+            [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
+        ],
+        'sobel': [
+            [[1, 0, -1], [2, 0, -2], [1, 0, -1]],
+            [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
+        ],
+        'laplace': [
+            [[0, 1, 0], [1, -4, 1], [0, 1, 0]],
+            [[0, -1, 0], [-1, 4, -1], [0, -1, 0]]
+        ]
+    }
     
-    return reflat_data(out_im_data)
+    first_kernel = types_map[bt_type][0]
+    second_kernel = types_map[bt_type][1]
 
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for row in range(im.height):
+            for col in range(im.width):
+                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
+                if (row < 1 or row > im.height-2 or col < 1 or col > im.width-2):
+                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
+                
+                # if not...
+                else:
+                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-1, row+2)
+                                                                   for y in range(col-1, col+2)]
+
+                    gX = 0
+                    gY = 0
+                    for x in range(3):
+                        for y in range(3):
+                            gX += first_kernel[x][y] * im_kernel[x * 3 + y]
+                            gY += second_kernel[x][y] * im_kernel[x * 3 + y]
+
+                    result_pixel = math.sqrt(gX**2 + gY**2)
+
+                    out_im_data[band_i].append(math.floor(result_pixel))
+
+    return reflat_data(out_im_data)
