@@ -108,6 +108,7 @@ class MainApplication():
         self.not_button = ttk.Button(self.binary_btns_frame, text="NOT", command=self._not)
         self.and_button = ttk.Button(self.binary_btns_frame, text="AND", command=self._and)
         self.or_button = ttk.Button(self.binary_btns_frame, text="OR", command=self._or)
+        self.xor_button = ttk.Button(self.binary_btns_frame, text="XOR", command=self._xor)
 
         self.filters_frame = ttk.Labelframe(self.buttons_frame, text="Filtros")
         self.mask_size_frame = ttk.Labelframe(self.filters_frame, text="Tamanho da máscara")
@@ -227,9 +228,10 @@ class MainApplication():
             self.limiarize_button.grid(column=0)
 
             self.binary_btns_frame.grid(column=0, sticky='we')
-            self.not_button.pack(side='left', expand=True, fill='x')
-            self.and_button.pack(side='left', expand=True, fill='x')
-            self.or_button.pack(side='left', expand=True, fill='x')
+            self.not_button.pack(side='left', expand=True)
+            self.and_button.pack(side='left', expand=True)
+            self.or_button.pack(side='left', expand=True)
+            self.xor_button.pack(side='left', expand=True)
 
             self.filters_frame.grid(column=0, sticky='we')
             self.min_button.grid(column=0, row=0, sticky='we')
@@ -623,6 +625,30 @@ class MainApplication():
 
         out_im = Image.new('1', im1.size)
         out_im_data = process.or_(im1, im2)
+        out_im.putdata(out_im_data)
+
+        self.output_img = out_im
+
+        self._show_image(self.output_img, self.output_img_label)
+
+    def _xor(self):
+        im1 = self.input_img
+        im2 = self.input_img2
+
+        for im in [im1, im2]:
+            if (im.mode != 'L'):
+                im_data = process.to_grayscale(im)
+
+                im = Image.new('L', im.size)
+                im.putdata(im_data)
+
+        for im in [im1, im2]:
+            im_data = process.binarize(im)
+            im = Image.new('1', im.size)
+            im.putdata(im_data)
+
+        out_im = Image.new('1', im1.size)
+        out_im_data = process.xor_(im1, im2)
         out_im.putdata(out_im_data)
 
         self.output_img = out_im

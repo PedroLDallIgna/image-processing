@@ -226,6 +226,7 @@ def to_negative(im):
             
     return reflat_data(out_im_data)
 
+# PARTIALLY WORKING
 def binarize(im, limiar_value=127):
     """Receives a grayscale image and binarize it"""
     im_data = get_image_data(im)
@@ -257,8 +258,8 @@ def not_(im):
 
 def and_(im1, im2):
     """Receives two binary images and apply AND operation in its pixels"""
-    if (im1.height != im2.height):
-        im2 = im2.resize((im1.height, im2.width), Image.Resampling.LANCZOS)
+    if (im1.size != im2.size):
+        im2 = im2.resize(im1.size, Image.Resampling.LANCZOS)
 
     im1_data = get_image_data(im1)
     im2_data = get_image_data(im2)
@@ -296,6 +297,28 @@ def or_(im1, im2):
             out_im_data[band_i].append(new_pixel)
     
     return reflat_data(out_im_data)
+
+def xor_(im1, im2):
+    """Receives two binary images and apply OR operation in its pixels"""
+    if (im1.size != im2.size):
+        im2 = im2.resize(im1.size, Image.Resampling.LANCZOS)
+
+    im1_data = get_image_data(im1)
+    im2_data = get_image_data(im2)
+    out_im_data = []
+
+    for band_i in range(len(im1_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im1_data[band_i])):
+            new_pixel = 0
+            if (im1_data[band_i][pixel_i] != im2_data[band_i][pixel_i]):
+                new_pixel = 255
+            else:
+                new_pixel = 0
+            out_im_data[band_i].append(new_pixel)
+    
+    return reflat_data(out_im_data)
+
 
 def filter(im, type, index=None, mask_size=3):
 
