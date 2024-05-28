@@ -136,9 +136,10 @@ class MainApplication():
         self.gaussian_filter_sigma_entry = ttk.Entry(self.gaussian_filter_frame, textvariable=self.gaussian_filter_sigma_value, width=5, justify='right')
         self.gaussian_filter_button = ttk.Button(self.gaussian_filter_frame, text="Filtro gaussiano", command=self._gaussian_filter)
 
-        self.prewitt_button = ttk.Button(self.buttons_frame, text="Prewitt", command=self._prewitt)
-        self.sobel_button = ttk.Button(self.buttons_frame, text="Sobel", command=self._sobel)
-        self.laplace_button = ttk.Button(self.buttons_frame, text="Laplace", command=self._laplace)
+        self.border_detection_frame = ttk.Labelframe(self.buttons_frame, text="Detecção de borda")
+        self.prewitt_button = ttk.Button(self.border_detection_frame, text="Prewitt", command=self._border_detection('prewitt'))
+        self.sobel_button = ttk.Button(self.border_detection_frame, text="Sobel", command=self._border_detection('sobel'))
+        self.laplace_button = ttk.Button(self.border_detection_frame, text="Laplace", command=self._border_detection('laplace'))
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -214,9 +215,10 @@ class MainApplication():
             self.gaussian_filter_button.grid(column=0, row=0, sticky='we')
             self.gaussian_filter_sigma_entry.grid(column=1, row=0, sticky='e')
 
-            self.prewitt_button.grid(column=0, sticky='we')
-            self.sobel_button.grid(column=0, sticky='we')
-            self.laplace_button.grid(column=0, sticky='we')
+            self.border_detection_frame.grid(column=0, sticky='we')
+            self.prewitt_button.pack(side='left', expand=True, fill='x')
+            self.sobel_button.pack(side='left', expand=True, fill='x')
+            self.laplace_button.pack(side='left', expand=True, fill='x')
 
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -788,41 +790,50 @@ class MainApplication():
         except ValueError:
             showerror("ValueError", "Tamanho da imagem resultante é zero. Modifique os valores.")
 
-    def _prewitt(self):
-        im = self.input_img
+    def _border_detection(self, method):
+        def prewitt():
+            im = self.input_img
 
-        out_im = Image.new(im.mode, im.size)
-        out_im_data = process.border_detection(im, 'prewitt')
+            out_im = Image.new(im.mode, im.size)
+            out_im_data = process.border_detection(im, 'prewitt')
 
-        out_im.putdata(out_im_data)
+            out_im.putdata(out_im_data)
 
-        self.output_img = out_im
+            self.output_img = out_im
 
-        self._show_image(self.output_img, self.output_img_label)
+            self._show_image(self.output_img, self.output_img_label)
 
-    def _sobel(self):
-        im = self.input_img
+        def sobel():
+            im = self.input_img
 
-        out_im = Image.new(im.mode, im.size)
-        out_im_data = process.border_detection(im, 'sobel')
+            out_im = Image.new(im.mode, im.size)
+            out_im_data = process.border_detection(im, 'sobel')
 
-        out_im.putdata(out_im_data)
+            out_im.putdata(out_im_data)
 
-        self.output_img = out_im
+            self.output_img = out_im
 
-        self._show_image(self.output_img, self.output_img_label)
+            self._show_image(self.output_img, self.output_img_label)
 
-    def _laplace(self):
-        im = self.input_img
+        def laplace():
+            im = self.input_img
 
-        out_im = Image.new(im.mode, im.size)
-        out_im_data = process.border_detection(im, 'laplace')
+            out_im = Image.new(im.mode, im.size)
+            out_im_data = process.border_detection(im, 'laplace')
 
-        out_im.putdata(out_im_data)
+            out_im.putdata(out_im_data)
 
-        self.output_img = out_im
+            self.output_img = out_im
 
-        self._show_image(self.output_img, self.output_img_label)
+            self._show_image(self.output_img, self.output_img_label)
+
+        methods_map = {
+            'prewitt': prewitt,
+            'sobel': sobel,
+            'laplace': laplace
+        }
+
+        return methods_map[method]
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
