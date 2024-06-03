@@ -146,6 +146,7 @@ class MainApplication():
         self.dilation_button = ttk.Button(self.morphologic_ops_frame, text="Dilatação", command=self._dilation)
         self.erosion_button = ttk.Button(self.morphologic_ops_frame, text="Erosão", command=self._erosion)
         self.opening_button = ttk.Button(self.morphologic_ops_frame, text="Abertura", command=self._opening)
+        self.closing_button = ttk.Button(self.morphologic_ops_frame, text="Fechamento", command=self._closing)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -230,6 +231,7 @@ class MainApplication():
             self.dilation_button.grid(column=0, row=0, sticky='we')
             self.erosion_button.grid(column=1, row=0, sticky='we')
             self.opening_button.grid(column=0, row=1, sticky='we')
+            self.closing_button.grid(column=1, row=1, sticky='we')
 
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -955,6 +957,39 @@ class MainApplication():
 
             out_im = Image.new(intermediary_im.mode, intermediary_im.size)
             out_im_data = process.dilation(intermediary_im)
+            out_im.putdata(out_im_data)
+
+            self.output_img = out_im
+
+            self._show_image(self.output_img, self.output_img_label)
+
+        except TypeError:
+            showerror("Imagem inválida", "A imagem precisa ser binária")
+
+    def _closing(self):
+        im = self.input_img
+
+        if im.mode != '1':
+            if (im.mode != 'L'):
+                grayscale_im = Image.new('L', im.size)
+                grayscale_im_data = process.to_grayscale(im)
+                grayscale_im.putdata(grayscale_im_data)
+
+                im = grayscale_im
+            
+            binary_im = Image.new('1', im.size)
+            binary_im_data = process.binarize(im)
+            binary_im.putdata(binary_im_data)
+
+            im = binary_im
+
+        try:
+            intermediary_im = Image.new(im.mode, im.size)
+            intermediary_im_data = process.dilation(im)
+            intermediary_im.putdata(intermediary_im_data)
+
+            out_im = Image.new(intermediary_im.mode, intermediary_im.size)
+            out_im_data = process.erosion(intermediary_im)
             out_im.putdata(out_im_data)
 
             self.output_img = out_im
