@@ -144,6 +144,7 @@ class MainApplication():
 
         self.morphologic_ops_frame = ttk.Labelframe(self.buttons_frame, text="Operações morfológicas")
         self.dilation_button = ttk.Button(self.morphologic_ops_frame, text="Dilatação", command=self._dilation)
+        self.erosion_button = ttk.Button(self.morphologic_ops_frame, text="Erosão", command=self._erosion)
 
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
@@ -226,6 +227,7 @@ class MainApplication():
             
             self.morphologic_ops_frame.grid(column=0, sticky='we')
             self.dilation_button.pack(side='left', expand=True, fill='x')
+            self.erosion_button.pack(side='left', expand=True, fill='x')
 
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -887,6 +889,36 @@ class MainApplication():
         try:
             out_im = Image.new(im.mode, im.size)
             out_im_data = process.dilation(im)
+
+            out_im.putdata(out_im_data)
+
+            self.output_img = out_im
+
+            self._show_image(self.output_img, self.output_img_label)
+
+        except TypeError:
+            showerror("Imagem inválida", "A imagem precisa ser binária")
+
+    def _erosion(self):
+        im = self.input_img
+
+        if im.mode != '1':
+            if (im.mode != 'L'):
+                grayscale_im = Image.new('L', im.size)
+                grayscale_im_data = process.to_grayscale(im)
+                grayscale_im.putdata(grayscale_im_data)
+
+                im = grayscale_im
+            
+            binary_im = Image.new('1', im.size)
+            binary_im_data = process.binarize(im)
+            binary_im.putdata(binary_im_data)
+
+            im = binary_im
+
+        try:
+            out_im = Image.new(im.mode, im.size)
+            out_im_data = process.erosion(im)
 
             out_im.putdata(out_im_data)
 

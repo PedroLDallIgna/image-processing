@@ -566,3 +566,39 @@ def dilation(im):
                     out_im_data[band_i].append(result_pixel)
 
     return reflat_data(out_im_data)
+
+def erosion(im):
+    if (im.mode != '1'):
+        raise TypeError("Only binary images are allowed")
+    
+    se = [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 1, 0]
+    ]
+
+    im_data = get_image_data(im)
+    out_im_data = []
+
+    for band_i in range(len(im_data)):
+        out_im_data.append([])
+        for row in range(im.height):
+            for col in range(im.width):
+                # if initial rows, final rows, initial columns or final columns, only appends the pixel value
+                if (row < 1 or row > im.height-2 or col < 1 or col > im.width-2):
+                    out_im_data[band_i].append(im_data[band_i][row * im.width + col])
+
+                # if not...
+                else:
+                    im_kernel = [im_data[band_i][x * im.width + y] for x in range(row-1, row+2)
+                                                                   for y in range(col-1, col+2)]
+
+                    counter = 0
+                    for i in range(3):
+                        for j in range(3):
+                            if (se[i][j] == 1 and im_kernel[i * 3 + j] == 255):
+                                counter += 1
+
+                    out_im_data[band_i].append(255 if counter == 5 else 0)
+
+    return reflat_data(out_im_data)
