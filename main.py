@@ -142,6 +142,9 @@ class MainApplication():
         self.sobel_button = ttk.Button(self.border_detection_frame, text="Sobel", command=self._border_detection('sobel'))
         self.laplace_button = ttk.Button(self.border_detection_frame, text="Laplace", command=self._border_detection('laplace'))
 
+        self.morphologic_ops_frame = ttk.Labelframe(self.buttons_frame, text="Operações morfológicas")
+        self.dilation_button = ttk.Button(self.morphologic_ops_frame, text="Dilatação", command=self._dilation)
+
     def _config(self) -> None:
         self.root.title("Processamento de Imagem")
         self.frame.grid()
@@ -220,6 +223,9 @@ class MainApplication():
             self.prewitt_button.pack(side='left', expand=True, fill='x')
             self.sobel_button.pack(side='left', expand=True, fill='x')
             self.laplace_button.pack(side='left', expand=True, fill='x')
+            
+            self.morphologic_ops_frame.grid(column=0, sticky='we')
+            self.dilation_button.pack(side='left', expand=True, fill='x')
 
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
@@ -860,6 +866,36 @@ class MainApplication():
         }
 
         return methods_map[method]
+
+    def _dilation(self):
+        im = self.input_img
+
+        if im.mode != '1':
+            if (im.mode != 'L'):
+                grayscale_im = Image.new('L', im.size)
+                grayscale_im_data = process.to_grayscale(im)
+                grayscale_im.putdata(grayscale_im_data)
+
+                im = grayscale_im
+            
+            binary_im = Image.new('1', im.size)
+            binary_im_data = process.binarize(im)
+            binary_im.putdata(binary_im_data)
+
+            im = binary_im
+
+        try:
+            out_im = Image.new(im.mode, im.size)
+            out_im_data = process.dilation(im)
+
+            out_im.putdata(out_im_data)
+
+            self.output_img = out_im
+
+            self._show_image(self.output_img, self.output_img_label)
+
+        except TypeError:
+            showerror("Imagem inválida", "A imagem precisa ser binária")
 
     def get_pixel(self, image, row, col, depth=None):
         img_data = list(image.getdata())
