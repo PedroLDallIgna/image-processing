@@ -61,6 +61,27 @@ def sum_images(im1, im2):
     # returns the flatted data
     return reflat_data(out_im_data)
 
+def subt_images(im1, im2):
+    if (im1.mode != im2.mode):
+        raise Exception("The images modes are different")
+
+    # resize the second image case they don't have the same size
+    if (im1.width != im2.width or im1.height != im2.height):
+        im2 = im2.resize(im1.size, Image.Resampling.LANCZOS)
+
+    im1_data = get_image_data(im1)
+    im2_data = get_image_data(im2)
+    out_im_data = []
+
+    for band_i in range(len(im1_data)):
+        out_im_data.append([])
+        for pixel_i in range(len(im1_data[band_i])):
+            out_im_data[band_i].append(trunc_pixel(im1_data[band_i][pixel_i] - im2_data[band_i][pixel_i]))
+
+    # returns the flatted data
+    return reflat_data(out_im_data)
+
+
 def get_histogram(im):
     im_data = get_image_data(im)
 
