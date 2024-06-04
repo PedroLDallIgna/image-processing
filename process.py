@@ -81,7 +81,6 @@ def subt_images(im1, im2):
     # returns the flatted data
     return reflat_data(out_im_data)
 
-
 def get_histogram(im):
     im_data = get_image_data(im)
 
