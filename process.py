@@ -246,7 +246,6 @@ def to_negative(im):
             
     return reflat_data(out_im_data)
 
-# PARTIALLY WORKING
 def binarize(im, limiar_value=127):
     """Receives a grayscale image and binarize it"""
     im_data = get_image_data(im)

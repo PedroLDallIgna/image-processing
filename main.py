@@ -615,17 +615,37 @@ class MainApplication():
         im1 = self.input_img
         im2 = self.input_img2
 
-        for im in [im1, im2]:
-            if (im.mode != 'L'):
-                im_data = process.to_grayscale(im)
+        if (im1.mode != '1'):
+            if (im1.mode != 'L'):
+                im_data = process.to_grayscale(im1)
 
-                im = Image.new('L', im.size)
-                im.putdata(im_data)
+                aux_im = Image.new('L', im1.size)
+                aux_im.putdata(im_data)
 
-        for im in [im1, im2]:
-            im_data = process.binarize(im)
-            im = Image.new('1', im.size)
-            im.putdata(im_data)
+                im1 = aux_im
+            
+            im_data = process.binarize(im1)
+            
+            aux_im = Image.new('1', im1.size)
+            aux_im.putdata(im_data)
+
+            im1 = aux_im
+        
+        if (im2.mode != '1'):
+            if (im2.mode != 'L'):
+                im_data = process.to_grayscale(im2)
+
+                aux_im = Image.new('L', im2.size)
+                aux_im.putdata(im_data)
+
+                im2 = aux_im
+            
+            im_data = process.binarize(im2)
+            
+            aux_im = Image.new('1', im2.size)
+            aux_im.putdata(im_data)
+
+            im2 = aux_im
 
         out_im = Image.new('1', im1.size)
         out_im_data = process.and_(im1, im2)
@@ -639,17 +659,37 @@ class MainApplication():
         im1 = self.input_img
         im2 = self.input_img2
 
-        for im in [im1, im2]:
-            if (im.mode != 'L'):
-                im_data = process.to_grayscale(im)
+        if (im1.mode != '1'):
+            if (im1.mode != 'L'):
+                im_data = process.to_grayscale(im1)
 
-                im = Image.new('L', im.size)
-                im.putdata(im_data)
+                aux_im = Image.new('L', im1.size)
+                aux_im.putdata(im_data)
 
-        for im in [im1, im2]:
-            im_data = process.binarize(im)
-            im = Image.new('1', im.size)
-            im.putdata(im_data)
+                im1 = aux_im
+            
+            im_data = process.binarize(im1)
+            
+            aux_im = Image.new('1', im1.size)
+            aux_im.putdata(im_data)
+
+            im1 = aux_im
+        
+        if (im2.mode != '1'):
+            if (im2.mode != 'L'):
+                im_data = process.to_grayscale(im2)
+
+                aux_im = Image.new('L', im2.size)
+                aux_im.putdata(im_data)
+
+                im2 = aux_im
+            
+            im_data = process.binarize(im2)
+            
+            aux_im = Image.new('1', im2.size)
+            aux_im.putdata(im_data)
+
+            im2 = aux_im
 
         out_im = Image.new('1', im1.size)
         out_im_data = process.or_(im1, im2)
@@ -663,17 +703,37 @@ class MainApplication():
         im1 = self.input_img
         im2 = self.input_img2
 
-        for im in [im1, im2]:
-            if (im.mode != 'L'):
-                im_data = process.to_grayscale(im)
+        if (im1.mode != '1'):
+            if (im1.mode != 'L'):
+                im_data = process.to_grayscale(im1)
 
-                im = Image.new('L', im.size)
-                im.putdata(im_data)
+                aux_im = Image.new('L', im1.size)
+                aux_im.putdata(im_data)
 
-        for im in [im1, im2]:
-            im_data = process.binarize(im)
-            im = Image.new('1', im.size)
-            im.putdata(im_data)
+                im1 = aux_im
+            
+            im_data = process.binarize(im1)
+            
+            aux_im = Image.new('1', im1.size)
+            aux_im.putdata(im_data)
+
+            im1 = aux_im
+        
+        if (im2.mode != '1'):
+            if (im2.mode != 'L'):
+                im_data = process.to_grayscale(im2)
+
+                aux_im = Image.new('L', im2.size)
+                aux_im.putdata(im_data)
+
+                im2 = aux_im
+            
+            im_data = process.binarize(im2)
+            
+            aux_im = Image.new('1', im2.size)
+            aux_im.putdata(im_data)
+
+            im2 = aux_im
 
         out_im = Image.new('1', im1.size)
         out_im_data = process.xor_(im1, im2)
