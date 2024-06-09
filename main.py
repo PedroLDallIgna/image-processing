@@ -17,7 +17,10 @@ class MainApplication():
     def __init__(self):
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
-        self.buttons_frame = ttk.Frame(self.frame, padding=5)
+        self.scroll_container = ttk.Frame(self.frame)
+        self.canvas = tk.Canvas(self.scroll_container, width=300)
+        self.scrollbar = ttk.Scrollbar(self.scroll_container, orient="vertical", command=self.canvas.yview)
+        self.buttons_frame = ttk.Frame(self.canvas)
 
         self.input_img_frame = ttk.Frame(self.frame)
         self.input_img_label = ttk.Label(self.input_img_frame, text="Imagem de entrada", width=40, anchor=CENTER) # label for selected image
@@ -153,10 +156,17 @@ class MainApplication():
         self.root.title("Processamento de Imagem")
         self.frame.grid()
         self.input_img_frame.grid(column=0, row=0, sticky='n')
-        self.input_img_label.grid(column=0, row=0, padx=20, pady=20)
-        self.buttons_frame.grid(column=2, row=0, rowspan=10, sticky='n')
+        self.input_img_label.grid(column=0, row=0, padx=10, pady=10)
+        self.buttons_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.scroll_container.grid(column=2, row=0, rowspan=10, sticky='ns')
         self.output_img_frame.grid(column=3, row=0, sticky='n')
-        self.output_img_label.grid(column=0, row=0, padx=20, pady=20)
+        self.output_img_label.grid(column=0, row=0, padx=10, pady=10)
         self.open_button.grid(column=0)
 
     def run(self) -> None:
@@ -181,6 +191,10 @@ class MainApplication():
 
             # show the action buttons
             self.open_button2.grid(column=0, sticky='we')
+
+            self.canvas.create_window((0,0), window=self.buttons_frame, anchor="nw")
+            self.canvas.pack(side="left", fill="both", expand=True)
+            self.scrollbar.pack(side="right", fill="y")
 
             self.arithmetic_ops_frame.grid(column=0, sticky='we')
             self.addition_button.grid(column=0, row=0, sticky='we')
