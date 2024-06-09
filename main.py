@@ -18,7 +18,7 @@ class MainApplication():
         self.root = tk.Tk()
         self.frame = ttk.Frame(self.root, padding=10)
         self.scroll_container = ttk.Frame(self.frame)
-        self.canvas = tk.Canvas(self.scroll_container, width=300)
+        self.canvas = tk.Canvas(self.scroll_container, width=250)
         self.scrollbar = ttk.Scrollbar(self.scroll_container, orient="vertical", command=self.canvas.yview)
         self.buttons_frame = ttk.Frame(self.canvas)
 
@@ -128,7 +128,7 @@ class MainApplication():
 
         self.order_filter_frame = ttk.Frame(self.filters_frame)
         self.order_value = tk.IntVar(value=0)
-        self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value)
+        self.order_entry = ttk.Entry(self.order_filter_frame, textvariable=self.order_value, width=5)
         self.order_button = ttk.Button(self.order_filter_frame, text="ORDER", command=self._order)
 
         self.conservative_suavization_button = ttk.Button(self.filters_frame, text="Suav. Conservativa", command=self._conservative_suavization)
@@ -243,6 +243,8 @@ class MainApplication():
             self.laplace_button.pack(side='left', expand=True, fill='x')
             
             self.morphologic_ops_frame.grid(column=0, sticky='we')
+            self.morphologic_ops_frame.grid_columnconfigure(0, weight=2)
+            self.morphologic_ops_frame.grid_columnconfigure(1, weight=2)
             self.dilation_button.grid(column=0, row=0, sticky='we')
             self.erosion_button.grid(column=1, row=0, sticky='we')
             self.opening_button.grid(column=0, row=1, sticky='we')
@@ -256,12 +258,16 @@ class MainApplication():
             self.limiarize_button.grid(column=0)
 
             self.binary_btns_frame.grid(column=0, sticky='we')
-            self.not_button.pack(side='left', expand=True)
-            self.and_button.pack(side='left', expand=True)
-            self.or_button.pack(side='left', expand=True)
-            self.xor_button.pack(side='left', expand=True)
+            self.binary_btns_frame.grid_columnconfigure(0, weight=2)
+            self.binary_btns_frame.grid_columnconfigure(1, weight=2)
+            self.not_button.grid(column=0, row=0, sticky='we')
+            self.and_button.grid(column=1, row=0, sticky='we')
+            self.or_button.grid(column=0, row=1, sticky='we')
+            self.xor_button.grid(column=1, row=1, sticky='we')
 
             self.filters_frame.grid(column=0, sticky='we')
+            self.filters_frame.grid_columnconfigure(0, weight=2)
+            self.filters_frame.grid_columnconfigure(1, weight=2)
             self.min_button.grid(column=0, row=0, sticky='we')
             self.mean_button.grid(column=0, row=1, sticky='we')
             self.max_button.grid(column=1, row=0, sticky='we')
@@ -269,8 +275,10 @@ class MainApplication():
             self.conservative_suavization_button.grid(column=0, columnspan=2, row=2, sticky='we')
 
             self.order_filter_frame.grid(column=0, row=3, columnspan=2, sticky='we')
-            self.order_entry.grid(column=0, row=0, sticky='we')
-            self.order_button.grid(column=1, row=0, sticky='we')
+            self.order_filter_frame.grid_columnconfigure(0, weight=4)
+            self.order_filter_frame.grid_columnconfigure(1, weight=1)
+            self.order_button.grid(column=0, row=0, sticky='we')
+            self.order_entry.grid(column=1, row=0, sticky='e')
 
             self.mask_size_frame.grid(column=0, columnspan=2, sticky='we')
             self.mask_size_3x3.grid(column=0, row=0, padx=2)
