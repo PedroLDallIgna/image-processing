@@ -395,7 +395,7 @@ class MainApplication():
             title='Open a file',
             initialdir='./',
             filetypes=filetypes,
-            defaultextension=filetypes
+            defaultextension=".png"
         )
 
         return filename
