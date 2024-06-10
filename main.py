@@ -76,14 +76,13 @@ class MainApplication():
         self.flip_vertically_button = ttk.Button(self.flips_frame, text="Vertical", command=self._flip_vertically)
         self.flip_horizontally_button = ttk.Button(self.flips_frame, text="Horizontal", command=self._flip_horizontally)
 
-        self.grayscale_button = ttk.Button(self.buttons_frame, text="Escala de cinza", command=self._to_grayscale, width=27)
-        self.negative_button = ttk.Button(self.buttons_frame, text="Negativo", command=self._to_negative, width=27)
-
+        self.group_1 = ttk.Frame(self.buttons_frame)
+        self.grayscale_button = ttk.Button(self.group_1, text="Escala de cinza", command=self._to_grayscale)
+        self.negative_button = ttk.Button(self.group_1, text="Negativo", command=self._to_negative)
         self.limiar_value = tk.IntVar(value=127)
-        self.limiar_entry = ttk.Entry(self.buttons_frame, textvariable=self.limiar_value, width=27)
-        self.limiarize_button = ttk.Button(self.buttons_frame, text="Limiarizar", command=self._limiarize, width=27)
-
-        self.histogram_button = ttk.Button(self.buttons_frame, text="Eq. Histograma", command=self._equalize_histogram, width=27)
+        self.limiar_entry = ttk.Entry(self.group_1, textvariable=self.limiar_value, width=5)
+        self.limiarize_button = ttk.Button(self.group_1, text="Limiarizar", command=self._limiarize)
+        self.histogram_button = ttk.Button(self.group_1, text="Eq. Histograma", command=self._equalize_histogram)
 
         self.btw_img_ops = ttk.Labelframe(self.buttons_frame, text="Operações entre imagens")
         self.sum_images_button = ttk.Button(self.btw_img_ops, text="Somar imagens", command=self._sum_images)
@@ -95,15 +94,17 @@ class MainApplication():
         self.blending_slider.bind("<ButtonRelease-1>", self._blending)
         self.blending_slider.bind("<Button1-Motion>", lambda event: self.blending_label.config(text=f"Blending: {int(self.blending_value.get())}%"))
 
+        self.brightness_frame = ttk.Frame(self.buttons_frame)
         self.brightness_value = tk.IntVar(value=0)
-        self.brightness_label = ttk.Label(self.buttons_frame, text=f"Brilho: {int(self.brightness_value.get())}%", width=27, anchor='w')
-        self.brightness_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.brightness_value)
+        self.brightness_label = ttk.Label(self.brightness_frame, text=f"Brilho: {int(self.brightness_value.get())}%", width=27, anchor='w')
+        self.brightness_slider = ttk.Scale(self.brightness_frame, from_=-100, to=100, orient='horizontal', variable=self.brightness_value)
         self.brightness_slider.bind("<ButtonRelease-1>", self._brightness)
         self.brightness_slider.bind("<Button1-Motion>", lambda event: self.brightness_label.config(text=f"Brilho: {int(self.brightness_value.get())}%"))
 
+        self.contrast_frame = ttk.Frame(self.buttons_frame)
         self.contrast_value = tk.IntVar(value=0)
-        self.contrast_label = ttk.Label(self.buttons_frame, text=f"Contraste: {int(self.contrast_value.get())}%", width=27, anchor='w')
-        self.contrast_slider = ttk.Scale(self.buttons_frame, from_=-100, to=100, orient='horizontal', variable=self.contrast_value)
+        self.contrast_label = ttk.Label(self.contrast_frame, text=f"Contraste: {int(self.contrast_value.get())}%", width=27, anchor='w')
+        self.contrast_slider = ttk.Scale(self.contrast_frame, from_=-100, to=100, orient='horizontal', variable=self.contrast_value)
         self.contrast_slider.bind("<ButtonRelease-1>", self._contrast)
         self.contrast_slider.bind("<Button1-Motion>", lambda event: self.contrast_label.config(text=f"Contraste: {int(self.contrast_value.get())}%"))
 
@@ -195,6 +196,23 @@ class MainApplication():
             self.canvas.create_window((0,0), window=self.buttons_frame, anchor="nw")
             self.canvas.pack(side="left", fill="both", expand=True)
             self.scrollbar.pack(side="right", fill="y")
+            
+            self.group_1.grid(column=0, sticky='we')
+            self.group_1.grid_columnconfigure(0, weight=2)
+            self.group_1.grid_columnconfigure(1, weight=2)
+            self.limiarize_button.grid(column=0, row=0, sticky='we')
+            self.limiar_entry.grid(column=1, row=0, sticky='we')
+            self.grayscale_button.grid(column=0, row=1, sticky='we')
+            self.histogram_button.grid(column=1, row=1, sticky='we')
+            self.negative_button.grid(column=0, row=2, columnspan=2, sticky='we')
+            self.brightness_frame.grid(column=0, columnspan=2, row=3, sticky='we')
+            self.brightness_frame.grid_columnconfigure(0, weight=2)
+            self.brightness_label.grid(column=0, row=0, sticky='w')
+            self.brightness_slider.grid(column=0, row=1, sticky="we")
+            self.contrast_frame.grid(column=0, columnspan=2, row=4, sticky='we')
+            self.contrast_frame.grid_columnconfigure(0, weight=2)
+            self.contrast_label.grid(column=0, row=0, sticky='w')
+            self.contrast_slider.grid(column=0, row=1, sticky="we")
 
             self.arithmetic_ops_frame.grid(column=0, sticky='we')
             self.addition_button.grid(column=0, row=0, sticky='we')
@@ -225,18 +243,6 @@ class MainApplication():
             self.flip_vertically_button.pack(side='left', expand=True, fill='x')
             self.flip_horizontally_button.pack(side='left', expand=True, fill='x')
 
-            self.grayscale_button.grid(column=0)
-            self.negative_button.grid(column=0)
-            self.histogram_button.grid(column=0)
-            self.brightness_label.grid(column=0)
-            self.brightness_slider.grid(column=0, sticky="we")
-            self.contrast_label.grid(column=0)
-            self.contrast_slider.grid(column=0, sticky="we")
-
-            self.gaussian_filter_frame.grid(column=0, sticky='we')
-            self.gaussian_filter_button.grid(column=0, row=0, sticky='we')
-            self.gaussian_filter_sigma_entry.grid(column=1, row=0, sticky='e')
-
             self.border_detection_frame.grid(column=0, sticky='we')
             self.prewitt_button.pack(side='left', expand=True, fill='x')
             self.sobel_button.pack(side='left', expand=True, fill='x')
@@ -253,9 +259,6 @@ class MainApplication():
 
             self.save_button.grid(column=0, row=1)
             self.reset_button.grid(column=0, row=2)
-
-            self.limiar_entry.grid(column=0)
-            self.limiarize_button.grid(column=0)
 
             self.binary_btns_frame.grid(column=0, sticky='we')
             self.binary_btns_frame.grid_columnconfigure(0, weight=2)
@@ -286,6 +289,10 @@ class MainApplication():
             self.mask_size_7x7.grid(column=2, row=0, padx=2)
             self.mask_size_9x9.grid(column=3, row=0, padx=2)
             self.mask_size_11x11.grid(column=4, row=0, padx=2)
+            
+            self.gaussian_filter_frame.grid(column=0, sticky='we')
+            self.gaussian_filter_button.grid(column=0, row=0, sticky='we')
+            self.gaussian_filter_sigma_entry.grid(column=1, row=0, sticky='e')
 
         except:
             print("imagem não selecionada")
